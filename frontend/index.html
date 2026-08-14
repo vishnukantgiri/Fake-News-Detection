@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fake News Detection</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e3a5f, #2563eb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background: rgba(255, 255, 255, 0.97);
+            padding: 35px;
+            border-radius: 22px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Header */
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            color: #172554;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        /* Textarea */
+
+        textarea {
+            width: 100%;
+            height: 230px;
+            padding: 18px;
+            border: 2px solid #dbe3ef;
+            border-radius: 14px;
+            resize: none;
+            font-size: 16px;
+            line-height: 1.6;
+            outline: none;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: 0.3s;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Buttons */
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .clear-btn {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .clear-btn:hover {
+            background: #cbd5e1;
+        }
+
+        /* Result */
+
+        #result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        /* Confidence */
+
+        #confidenceBox {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .confidence-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #334155;
+            font-weight: bold;
+        }
+
+        #confidenceText {
+            color: #2563eb;
+            font-size: 18px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 18px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #60a5fa);
+            border-radius: 20px;
+            transition: width 0.7s ease;
+        }
+
+        /* Loading */
+
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: blink 1.2s infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 80%, 100% {
+                opacity: 0.3;
+            }
+
+            40% {
+                opacity: 1;
+            }
+        }
+
+        /* Footer */
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 25px 18px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            textarea {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+
+        <div class="header">
+
+            <div class="icon">📰</div>
+
+            <h1>Fake News Detection</h1>
+
+            <p class="subtitle">
+                Enter a news article and check whether it is Real or Fake.
+            </p>
+
+        </div>
+
+
+        <!-- News Input -->
+
+        <textarea
+            id="newsText"
+            placeholder="Paste your news article here..."></textarea>
+
+
+        <!-- Buttons -->
+
+        <div class="buttons">
+
+            <button class="check-btn" onclick="checkNews()">
+                🔍 Check News
+            </button>
+
+            <button class="clear-btn" onclick="clearNews()">
+                🗑 Clear
+            </button>
+
+        </div>
+
+
+        <!-- Result -->
+
+        <div id="result"></div>
+
+
+        <!-- Confidence -->
+
+        <div id="confidenceBox">
+
+            <div class="confidence-title">
+
+                <span>Confidence</span>
+
+                <span id="confidenceText">0%</span>
+
+            </div>
+
+            <div class="progress">
+
+                <div id="progressBar"></div>
+
+            </div>
+
+        </div>
+        
+
+
+        <!-- Footer -->
+
+        <div class="footer">
+            AI-powered Fake News Detection System
+        </div>
+
+    </div>
+
+
+    <script>
+
+        async function checkNews() {
+
+            const news = document.getElementById("newsText").value.trim();
+
+            const result = document.getElementById("result");
+
+            const confidenceBox =
+                document.getElementById("confidenceBox");
+
+            const progressBar =
+                document.getElementById("progressBar");
+
+            const confidenceText =
+                document.getElementById("confidenceText");
+
+
+            /* Check empty input */
+
+            if (news === "") {
+
+                result.style.display = "block";
+
+                result.style.background = "#fff3cd";
+
+                result.style.color = "#856404";
+
+                result.innerText = "⚠️ Please enter some news.";
+
+                confidenceBox.style.display = "none";
+
+                return;
+            }
+
+
+            /* Loading */
+
+            result.style.display = "block";
+
+            result.style.background = "#e0f2fe";
+
+            result.style.color = "#0369a1";
+
+            result.innerHTML = `
+                <span class="loading">
+                    Checking
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </span>
+            `;
+
+            confidenceBox.style.display = "none";
+
+
+            try {
+
+                const response = await fetch("/predict", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        news: news
+                    })
+
+                });
+
+
+                /* Check server response */
+
+                if (!response.ok) {
+                    throw new Error("Server error");
+                }
+
+
+                const data = await response.json();
+
+
+                /* Result */
+
+                if (data.result === "REAL NEWS") {
+
+                    result.style.background = "#dcfce7";
+
+                    result.style.color = "#166534";
+
+                    result.innerText = "✅ REAL NEWS";
+
+                }
+
+                else {
+
+                    result.style.background = "#fee2e2";
+
+                    result.style.color = "#991b1b";
+
+                    result.innerText = "❌ FAKE NEWS";
+
+                }
+
+
+                /* Confidence */
+
+                const confidence =
+                    Number(data.confidence) || 0;
+
+
+                confidenceBox.style.display = "block";
+
+                confidenceText.innerText =
+                    confidence.toFixed(2) + "%";
+
+                progressBar.style.width =
+                    confidence + "%";
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                result.style.display = "block";
+
+                result.style.background = "#fee2e2";
+
+                result.style.color = "#991b1b";
+
+                result.innerText =
+                    "⚠️ Something went wrong. Please check the backend.";
+
+                confidenceBox.style.display = "none";
+
+            }
+
+        }
+
+
+        /* Clear button */
+
+        function clearNews() {
+
+            document.getElementById("newsText").value = "";
+
+            document.getElementById("result").style.display = "none";
+
+            document.getElementById("confidenceBox").style.display = "none";
+
+            document.getElementById("progressBar").style.width = "0%";
+
+            document.getElementById("confidenceText").innerText = "0%";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
