@@ -1,1144 +1,970 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fake News Detection</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detection</title>
 
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,Helvetica,sans-serif;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Inter, Arial, Helvetica, sans-serif;
+        }
 
-body{
-    min-height:100vh;
-    background:linear-gradient(135deg,#0f172a,#1e3a5f,#2563eb);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:25px;
-}
+        :root {
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-soft: #ecfdf3;
+            --green-border: #d1fae5;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e5e7eb;
+            --panel: #ffffff;
+            --bg: #f7faf8;
+            --danger: #dc2626;
+        }
 
-.container{
-    width:100%;
-    max-width:850px;
-    background:rgba(255,255,255,.97);
-    padding:32px;
-    border-radius:22px;
-    box-shadow:0 20px 50px rgba(0,0,0,.35);
-}
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
 
-.header{
-    text-align:center;
-    margin-bottom:22px;
-}
+        body::before {
+            content: "";
+            position: fixed;
+            width: 520px;
+            height: 260px;
+            right: -120px;
+            top: -90px;
+            background: #d9f8e5;
+            border-radius: 0 0 0 70%;
+            z-index: -1;
+        }
 
-.icon{
-    font-size:48px;
-    margin-bottom:8px;
-}
+        body.dark {
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: #334155;
+            --panel: #111827;
+            --bg: #0b1220;
+            --green-soft: #0f2a1a;
+            --green-border: #14532d;
+            background: var(--bg);
+        }
 
-h1{
-    color:#172554;
-    font-size:32px;
-    margin-bottom:8px;
-}
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
 
-.subtitle{
-    color:#64748b;
-    font-size:15px;
-}
+        /* Sidebar */
+        .sidebar {
+            width: 285px;
+            flex-shrink: 0;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            padding: 34px 22px 24px;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* NAVIGATION */
+        .brand {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 0 10px;
+        }
 
-.nav{
-    display:flex;
-    gap:8px;
-    margin:22px 0 0;
-}
+        .brand-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 13px;
+            background: var(--green);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 23px;
+            box-shadow: 0 8px 20px rgba(22, 163, 74, .18);
+        }
 
-.nav button{
-    flex:1;
-    padding:12px;
-    border:1px solid #dbe3ef;
-    background:#fff;
-    border-radius:10px;
-    color:#334155;
-    font-weight:bold;
-    cursor:pointer;
-}
+        .brand h2 {
+            font-size: 21px;
+            line-height: 1.12;
+            color: var(--text);
+        }
 
-.nav button:hover{
-    background:#eff6ff;
-}
+        .brand p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+        }
 
-.nav button.active{
-    background:#2563eb;
-    color:#fff;
-    border-color:#2563eb;
-}
+        .nav {
+            margin-top: 45px;
+            display: grid;
+            gap: 8px;
+        }
 
-/* PAGES */
+        .nav-item {
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            width: 100%;
+            padding: 14px 15px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-align: left;
+            font-size: 15px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
 
-.page{
-    display:none;
-    margin-top:22px;
-}
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--green-dark);
+            background: var(--green-soft);
+        }
 
-.page.active{
-    display:block;
-}
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 19px;
+        }
 
-/* TEXTAREA */
+        .sidebar-card {
+            margin: auto 13px 22px;
+            padding: 18px 14px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--panel), var(--green-soft));
+        }
 
-textarea{
-    width:100%;
-    height:210px;
-    padding:18px;
-    border:2px solid #dbe3ef;
-    border-radius:14px;
-    resize:vertical;
-    min-height:150px;
-    font-size:16px;
-    line-height:1.6;
-    outline:none;
-    color:#1e293b;
-    background:#f8fafc;
-}
+        .sidebar-card .shield {
+            font-size: 45px;
+            margin-bottom: 8px;
+        }
 
-textarea:focus{
-    border-color:#2563eb;
-    background:#fff;
-    box-shadow:0 0 0 4px rgba(37,99,235,.1);
-}
+        .sidebar-card strong {
+            display: block;
+            font-size: 14px;
+        }
 
-.counter{
-    text-align:right;
-    color:#64748b;
-    font-size:12px;
-    margin-top:5px;
-}
+        .sidebar-card p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
 
-/* BUTTONS */
+        .dark-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 12px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            color: var(--muted);
+            font-size: 14px;
+        }
 
-.buttons{
-    display:flex;
-    gap:12px;
-    margin-top:15px;
-}
+        .switch {
+            width: 42px;
+            height: 23px;
+            border: 0;
+            border-radius: 20px;
+            background: #cbd5e1;
+            cursor: pointer;
+            position: relative;
+            transition: .2s;
+        }
 
-.buttons button{
-    flex:1;
-    padding:14px;
-    border:0;
-    border-radius:12px;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-}
+        .switch::after {
+            content: "";
+            position: absolute;
+            width: 17px;
+            height: 17px;
+            top: 3px;
+            left: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .2s;
+        }
 
-.check-btn{
-    background:linear-gradient(135deg,#2563eb,#1d4ed8);
-    color:#fff;
-}
+        body.dark .switch {
+            background: var(--green);
+        }
 
-.clear-btn{
-    background:#e2e8f0;
-    color:#334155;
-}
+        body.dark .switch::after {
+            left: 22px;
+        }
 
-/* RESULT */
+        /* Main */
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 42px 45px 25px;
+        }
 
-#result{
-    display:none;
-    margin-top:22px;
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
-    font-size:23px;
-    font-weight:bold;
-}
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 27px;
+        }
 
-/* CONFIDENCE */
+        .title-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
 
-#confidenceBox{
-    display:none;
-    margin-top:18px;
-    padding:20px;
-    background:#f8fafc;
-    border-radius:15px;
-    border:1px solid #e2e8f0;
-}
+        .title-shield {
+            font-size: 38px;
+            line-height: 1;
+        }
 
-.confidence-title{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
-    color:#334155;
-    font-weight:bold;
-}
+        h1 {
+            font-size: 32px;
+            letter-spacing: -.5px;
+            line-height: 1.1;
+        }
 
-#confidenceText{
-    color:#2563eb;
-    font-size:18px;
-}
+        .subtitle {
+            color: var(--muted);
+            margin-top: 8px;
+            font-size: 15px;
+        }
 
-.progress{
-    height:18px;
-    background:#e2e8f0;
-    border-radius:20px;
-    overflow:hidden;
-}
+        .date-card {
+            background: var(--green);
+            color: white;
+            padding: 12px 17px;
+            border-radius: 13px;
+            min-width: 145px;
+            box-shadow: 0 10px 25px rgba(22, 163, 74, .17);
+        }
 
-#progressBar{
-    width:0;
-    height:100%;
-    background:linear-gradient(90deg,#2563eb,#60a5fa);
-    transition:width .7s;
-}
+        .date-card small {
+            display: block;
+            opacity: .88;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
 
-/* HISTORY */
+        .date-card strong {
+            font-size: 14px;
+        }
 
-.history{
-    border:1px solid #e2e8f0;
-    border-radius:14px;
-    overflow:hidden;
-}
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, .045);
+        }
 
-.history-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 16px;
-    background:#f8fafc;
-    font-weight:bold;
-}
+        .input-panel {
+            padding: 27px 30px 18px;
+        }
 
-.history-head button{
-    border:0;
-    background:transparent;
-    color:#dc2626;
-    cursor:pointer;
-    font-weight:bold;
-}
+        .section-title {
+            color: var(--green-dark);
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
 
-.history-row{
-    display:grid;
-    grid-template-columns:1fr 70px 70px 80px;
-    gap:10px;
-    padding:12px 15px;
-    border-top:1px solid #e2e8f0;
-    font-size:12px;
-}
+        textarea {
+            width: 100%;
+            height: 145px;
+            padding: 17px;
+            border: 1px solid #dbe3df;
+            border-radius: 12px;
+            resize: vertical;
+            min-height: 120px;
+            font-size: 15px;
+            line-height: 1.6;
+            outline: none;
+            color: var(--text);
+            background: var(--panel);
+            transition: .2s;
+        }
 
-.history-news{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
+        textarea:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, .09);
+        }
 
-.real-b{
-    color:#15803d;
-    font-weight:bold;
-}
+        textarea::placeholder {
+            color: #94a3b8;
+        }
 
-.fake-b{
-    color:#dc2626;
-    font-weight:bold;
-}
+        .input-footer {
+            display: flex;
+            justify-content: flex-end;
+            color: var(--muted);
+            font-size: 12px;
+            margin: 7px 3px 12px;
+        }
 
-.history-time{
-    color:#64748b;
-}
+        .detect-wrap {
+            display: flex;
+            justify-content: center;
+        }
 
-.empty{
-    text-align:center;
-    color:#64748b;
-    padding:22px;
-}
+        .detect-btn {
+            border: 0;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white;
+            padding: 13px 31px;
+            border-radius: 11px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 7px 17px rgba(22, 163, 74, .2);
+            transition: .2s ease;
+        }
 
-/* LOADING */
+        .detect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 23px rgba(22, 163, 74, .25);
+        }
 
-.loading{
-    display:inline-flex;
-    gap:7px;
-    align-items:center;
-}
+        .detect-btn:disabled {
+            opacity: .7;
+            cursor: wait;
+            transform: none;
+        }
 
-.dot{
-    width:8px;
-    height:8px;
-    background:currentColor;
-    border-radius:50%;
-    animation:blink 1.2s infinite;
-}
+        /* Result cards */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 21px;
+        }
 
-.dot:nth-child(2){
-    animation-delay:.2s;
-}
+        .result-card {
+            min-height: 133px;
+            padding: 24px 28px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+        }
 
-.dot:nth-child(3){
-    animation-delay:.4s;
-}
+        .result-card.real {
+            background: linear-gradient(135deg, var(--green-soft), var(--panel));
+            border-color: var(--green-border);
+        }
 
-@keyframes blink{
-    0%,80%,100%{
-        opacity:.3;
-    }
+        .card-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
 
-    40%{
-        opacity:1;
-    }
-}
+        .prediction-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-/* FOOTER */
+        #predictionText {
+            font-size: 28px;
+            color: var(--green-dark);
+            font-weight: 800;
+        }
 
-.footer{
-    text-align:center;
-    margin-top:25px;
-    color:#94a3b8;
-    font-size:13px;
-}
+        #predictionText.fake {
+            color: var(--danger);
+        }
 
-/* MOBILE */
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--green);
+            color: white;
+            font-size: 25px;
+        }
 
-@media(max-width:650px){
+        .status-icon.fake {
+            background: var(--danger);
+        }
 
-    body{
-        padding:12px;
-        align-items:flex-start;
-    }
+        .prediction-message {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 7px;
+        }
 
-    .container{
-        padding:22px 16px;
-        border-radius:17px;
-    }
+        .confidence-value {
+            color: var(--green-dark);
+            font-size: 27px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
 
-    h1{
-        font-size:26px;
-    }
+        .progress {
+            width: 100%;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
+        }
 
-    .nav{
-        overflow-x:auto;
-    }
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #16a34a, #22c55e);
+            border-radius: 20px;
+            transition: width .7s ease;
+        }
 
-    .nav button{
-        white-space:nowrap;
-        min-width:140px;
-    }
+        /* History */
+        .history-panel {
+            margin-top: 21px;
+            padding: 21px 23px 16px;
+        }
 
-    .buttons{
-        flex-direction:column;
-    }
+        .history-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 13px;
+        }
 
-    .history-row{
-        grid-template-columns:1fr 65px 65px;
-    }
+        .history-heading h3 {
+            color: var(--green-dark);
+            font-size: 17px;
+        }
 
-    .history-time{
-        display:none;
-    }
+        .clear-history {
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            font-size: 18px;
+            cursor: pointer;
+        }
 
-    textarea{
-        height:190px;
-    }
-}
-</style>
+        .history-list {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .history-row {
+            display: grid;
+            grid-template-columns: 1fr 75px 65px 75px;
+            gap: 10px;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .history-row:last-child {
+            border-bottom: 0;
+        }
+
+        .history-news {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text);
+        }
+
+        .badge {
+            text-align: center;
+            padding: 5px 8px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge.real {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .badge.fake {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .history-confidence,
+        .history-time {
+            color: var(--muted);
+            text-align: right;
+        }
+
+        .empty-history {
+            padding: 23px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: blink 1.2s infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: .2s; }
+        .dot:nth-child(3) { animation-delay: .4s; }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: .3; }
+            40% { opacity: 1; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                padding: 30px 25px 20px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .app {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 17px;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand {
+                justify-content: center;
+            }
+
+            .nav {
+                margin-top: 18px;
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .nav-item {
+                width: auto;
+                white-space: nowrap;
+            }
+
+            .sidebar-card,
+            .dark-toggle {
+                display: none;
+            }
+
+            .main {
+                padding: 25px 15px 20px;
+            }
+
+            .topbar {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .date-card {
+                width: 100%;
+            }
+
+            .input-panel {
+                padding: 20px 17px 16px;
+            }
+
+            .history-row {
+                grid-template-columns: 1fr 62px 50px;
+            }
+
+            .history-time {
+                display: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div class="app">
 
-<div class="container">
-
-<!-- HEADER -->
-
-<div class="header">
-
-    <div class="icon">🛡️</div>
-
-    <h1>Fake News Detection</h1>
-
-    <p class="subtitle">
-        AI-powered news authenticity checker
-    </p>
-
-</div>
-
-
-<!-- NAVIGATION -->
-
-<div class="nav">
-
-    <button
-        id="detectTab"
-        class="active"
-        onclick="showPage('detectPage','detectTab')">
-
-        🔍 Detect News
-
-    </button>
-
-    <button
-        id="historyTab"
-        onclick="showPage('historyPage','historyTab')">
-
-        🕒 History
-
-    </button>
-
-</div>
-
-
-<!-- DETECT PAGE -->
-
-<section
-    id="detectPage"
-    class="page active">
-
-    <textarea
-        id="newsText"
-        maxlength="5000"
-        placeholder="Paste your news article or text here..."></textarea>
-
-    <div class="counter">
-
-        <span id="counter">0</span> / 5000
-
-    </div>
-
-
-    <div class="buttons">
-
-        <button
-            class="check-btn"
-            id="checkBtn"
-            onclick="checkNews()">
-
-            🔍 Check News
-
-        </button>
-
-
-        <button
-            class="clear-btn"
-            onclick="clearNews()">
-
-            🗑 Clear
-
-        </button>
-
-    </div>
-
-
-    <!-- RESULT -->
-
-    <div id="result"></div>
-
-
-    <!-- CONFIDENCE -->
-
-    <div id="confidenceBox">
-
-        <div class="confidence-title">
-
-            <span>
-                Confidence Score
-            </span>
-
-            <span id="confidenceText">
-                0%
-            </span>
-
-        </div>
-
-
-        <div class="progress">
-
-            <div id="progressBar"></div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- HISTORY PAGE -->
-
-<section
-    id="historyPage"
-    class="page">
-
-    <div class="history">
-
-        <div class="history-head">
-
-            <span>
-                🕒 Recent Detection History
-            </span>
-
-            <button onclick="clearHistory()">
-                Clear All
-            </button>
-
-        </div>
-
-
-        <div id="historyList">
-
-            <div class="empty">
-                No news checked yet.
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">✓</div>
+                <div>
+                    <h2>Fake News<br>Detection</h2>
+                    <p>AI-Powered News Verifier</p>
+                </div>
             </div>
 
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- FOOTER -->
-
-<div class="footer">
-
-    🛡️ AI-powered Fake News Detection System
-
-</div>
-
-</div>
-
-
-<script>
-
-/* ================================
-   ELEMENTS
-================================ */
-
-const newsText =
-    document.getElementById("newsText");
-
-const counter =
-    document.getElementById("counter");
-
-
-/* ================================
-   CHARACTER COUNTER
-================================ */
-
-newsText.addEventListener(
-    "input",
-    function(){
-
-        counter.textContent =
-            newsText.value.length;
-
-    }
-);
-
-
-/* ================================
-   GET HISTORY
-================================ */
-
-function getHistory(){
-
-    try{
-
-        const data =
-            localStorage.getItem(
-                "fakeNewsHistory"
-            );
-
-        if(!data){
-            return [];
-        }
-
-        const history =
-            JSON.parse(data);
-
-        return Array.isArray(history)
-            ? history
-            : [];
-
-    }
-
-    catch(error){
-
-        console.error(
-            "History error:",
-            error
-        );
-
-        return [];
-
-    }
-
-}
-
-
-/* ================================
-   SAVE HISTORY
-================================ */
-
-function saveHistory(
-    news,
-    result,
-    confidence
-){
-
-    const history =
-        getHistory();
-
-
-    history.unshift({
-
-        news: news,
-
-        result: result,
-
-        confidence:
-            Number(confidence),
-
-        time:
-            new Date().toLocaleTimeString(
-                "en-IN",
-                {
-                    hour:"2-digit",
-                    minute:"2-digit"
-                }
-            )
-
-    });
-
-
-    localStorage.setItem(
-        "fakeNewsHistory",
-        JSON.stringify(
-            history.slice(0,50)
-        )
-    );
-
-
-    renderHistory();
-
-}
-
-
-/* ================================
-   ESCAPE HTML
-================================ */
-
-function escapeHtml(text){
-
-    return String(text)
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-
-/* ================================
-   RENDER HISTORY
-================================ */
-
-function renderHistory(){
-
-    const history =
-        getHistory();
-
-
-    const list =
-        document.getElementById(
-            "historyList"
-        );
-
-
-    if(history.length === 0){
-
-        list.innerHTML =
-            '<div class="empty">' +
-            'No news checked yet.' +
-            '</div>';
-
-        return;
-
-    }
-
-
-    list.innerHTML =
-        history
-        .slice(0,10)
-        .map(
-            function(item){
-
-                const resultClass =
-                    item.result === "Real"
-                    ? "real-b"
-                    : "fake-b";
-
-
-                return `
-
-                <div class="history-row">
-
-                    <div
-                        class="history-news"
-                        title="${escapeHtml(
-                            item.news
-                        )}">
-
-                        ${escapeHtml(
-                            item.news
-                        )}
-
-                    </div>
-
-
-                    <div
-                        class="${resultClass}">
-
-                        ${item.result}
-
-                    </div>
-
-
+            <nav class="nav">
+                <button class="nav-item active" onclick="scrollToSection('home')">
+                    <span class="nav-icon">⌂</span> Home
+                </button>
+                <button class="nav-item" onclick="scrollToSection('detect')">
+                    <span class="nav-icon">⌕</span> Detect News
+                </button>
+                <button class="nav-item" onclick="scrollToSection('history')">
+                    <span class="nav-icon">◷</span> History
+                </button>
+                <button class="nav-item" onclick="scrollToSection('statistics')">
+                    <span class="nav-icon">▥</span> Statistics
+                </button>
+                <button class="nav-item" onclick="showAbout()">
+                    <span class="nav-icon">ⓘ</span> About
+                </button>
+            </nav>
+
+            <div class="sidebar-card">
+                <div class="shield">🛡️</div>
+                <strong>Verify. Detect. Stay Informed.</strong>
+                <p>Helping you identify real news in a world of misinformation.</p>
+            </div>
+
+            <div class="dark-toggle">
+                <span>◐ &nbsp; Dark Mode</span>
+                <button class="switch" id="darkSwitch" onclick="toggleDarkMode()" aria-label="Toggle dark mode"></button>
+            </div>
+        </aside>
+
+        <main class="main" id="home">
+
+            <div class="topbar">
+                <div class="title-wrap">
+                    <div class="title-shield">🛡️</div>
                     <div>
-
-                        ${Number(
-                            item.confidence
-                        ).toFixed(1)}%
-
+                        <h1>Fake News Detection</h1>
+                        <p class="subtitle">Check the authenticity of any news content</p>
                     </div>
-
-
-                    <div class="history-time">
-
-                        ${item.time || ""}
-
-                    </div>
-
                 </div>
 
-                `;
+                <div class="date-card">
+                    <small>Today's Date</small>
+                    <strong id="todayDate"></strong>
+                </div>
+            </div>
 
+            <section class="panel input-panel" id="detect">
+                <div class="section-title">✎ &nbsp; Enter News Article or Text</div>
+
+                <textarea
+                    id="newsText"
+                    maxlength="5000"
+                    placeholder="Paste your news article or text here..."></textarea>
+
+                <div class="input-footer">
+                    <span id="charCount">0 / 5000</span>
+                </div>
+
+                <div class="detect-wrap">
+                    <button class="detect-btn" id="detectBtn" onclick="checkNews()">
+                        🔍 &nbsp; Detect News
+                    </button>
+                </div>
+            </section>
+
+            <section class="result-grid hidden" id="resultSection">
+                <div class="result-card real" id="resultCard">
+                    <div class="card-label">Prediction</div>
+
+                    <div class="prediction-row">
+                        <div>
+                            <div id="predictionText">Real News</div>
+                            <div class="prediction-message" id="predictionMessage">
+                                This news is likely to be real.
+                            </div>
+                        </div>
+
+                        <div class="status-icon" id="statusIcon">✓</div>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="card-label">Confidence Score</div>
+                    <div class="confidence-value" id="confidenceText">0%</div>
+
+                    <div class="progress">
+                        <div id="progressBar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel history-panel" id="history">
+                <div class="history-heading">
+                    <h3>◷ &nbsp; Recent History</h3>
+                    <button class="clear-history" onclick="clearHistory()" title="Clear history">♜</button>
+                </div>
+
+                <div class="history-list" id="historyList">
+                    <div class="empty-history">No news checked yet.</div>
+                </div>
+            </section>
+
+            <div class="footer">
+                🛡️ Fake News Detection System &nbsp; | &nbsp; Built using AI &amp; ML
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const newsText = document.getElementById("newsText");
+        const charCount = document.getElementById("charCount");
+        const detectBtn = document.getElementById("detectBtn");
+
+        newsText.addEventListener("input", () => {
+            charCount.textContent = `${newsText.value.length} / 5000`;
+        });
+
+        function setTodayDate() {
+            const now = new Date();
+            document.getElementById("todayDate").textContent =
+                now.toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                });
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+
+        function showAbout() {
+            alert(
+                "Fake News Detection System\\n\\n" +
+                "An AI/ML powered interface for checking whether submitted news is Real or Fake."
+            );
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark");
+            localStorage.setItem(
+                "fakeNewsDarkMode",
+                document.body.classList.contains("dark") ? "1" : "0"
+            );
+        }
+
+        function loadDarkMode() {
+            if (localStorage.getItem("fakeNewsDarkMode") === "1") {
+                document.body.classList.add("dark");
             }
-        )
-        .join("");
+        }
 
-}
+        async function checkNews() {
+            const news = newsText.value.trim();
 
+            const resultSection = document.getElementById("resultSection");
+            const resultCard = document.getElementById("resultCard");
+            const predictionText = document.getElementById("predictionText");
+            const predictionMessage = document.getElementById("predictionMessage");
+            const statusIcon = document.getElementById("statusIcon");
+            const confidenceText = document.getElementById("confidenceText");
+            const progressBar = document.getElementById("progressBar");
 
-/* ================================
-   PAGE SWITCH
-================================ */
-
-function showPage(
-    pageId,
-    tabId
-){
-
-    document
-        .querySelectorAll(".page")
-        .forEach(
-            function(page){
-
-                page.classList.remove(
-                    "active"
-                );
-
+            if (news === "") {
+                resultSection.classList.remove("hidden");
+                resultCard.classList.remove("real");
+                predictionText.className = "fake";
+                predictionText.textContent = "Enter News";
+                predictionMessage.textContent = "Please enter some news text first.";
+                statusIcon.className = "status-icon fake";
+                statusIcon.textContent = "!";
+                confidenceText.textContent = "0%";
+                progressBar.style.width = "0%";
+                return;
             }
-        );
 
+            detectBtn.disabled = true;
+            detectBtn.innerHTML = `
+                <span class="loading">
+                    Checking
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </span>
+            `;
 
-    document
-        .getElementById(pageId)
-        .classList.add("active");
+            resultSection.classList.remove("hidden");
+            predictionText.className = "";
+            predictionText.textContent = "Checking...";
+            predictionMessage.textContent = "Analyzing the submitted news...";
+            statusIcon.className = "status-icon";
+            statusIcon.textContent = "…";
+            confidenceText.textContent = "0%";
+            progressBar.style.width = "0%";
 
-
-    document
-        .querySelectorAll(".nav button")
-        .forEach(
-            function(button){
-
-                button.classList.remove(
-                    "active"
-                );
-
-            }
-        );
-
-
-    document
-        .getElementById(tabId)
-        .classList.add("active");
-
-
-    if(pageId === "historyPage"){
-
-        renderHistory();
-
-    }
-
-}
-
-
-/* ================================
-   CHECK NEWS
-================================ */
-
-async function checkNews(){
-
-    const news =
-        newsText.value.trim();
-
-
-    const result =
-        document.getElementById(
-            "result"
-        );
-
-
-    const confidenceBox =
-        document.getElementById(
-            "confidenceBox"
-        );
-
-
-    const progressBar =
-        document.getElementById(
-            "progressBar"
-        );
-
-
-    const confidenceText =
-        document.getElementById(
-            "confidenceText"
-        );
-
-
-    const button =
-        document.getElementById(
-            "checkBtn"
-        );
-
-
-    /* Empty */
-
-    if(!news){
-
-        result.style.display =
-            "block";
-
-        result.style.background =
-            "#fff3cd";
-
-        result.style.color =
-            "#856404";
-
-        result.innerText =
-            "⚠️ Please enter news text first.";
-
-        confidenceBox.style.display =
-            "none";
-
-        return;
-
-    }
-
-
-    /* Loading */
-
-    button.disabled = true;
-
-    button.innerHTML = `
-
-        <span class="loading">
-
-            Checking
-
-            <span class="dot"></span>
-
-            <span class="dot"></span>
-
-            <span class="dot"></span>
-
-        </span>
-
-    `;
-
-
-    result.style.display =
-        "block";
-
-    result.style.background =
-        "#e0f2fe";
-
-    result.style.color =
-        "#0369a1";
-
-    result.innerText =
-        "Checking...";
-
-
-    confidenceBox.style.display =
-        "none";
-
-
-    try{
-
-        /* Backend request */
-
-        const response =
-            await fetch(
-                "/predict",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
                     },
+                    body: JSON.stringify({
+                        news: news
+                    })
+                });
 
-                    body:
-                        JSON.stringify({
-                            news:news
-                        })
+                if (!response.ok) {
+                    throw new Error("Server error");
                 }
-            );
 
+                const data = await response.json();
 
-        const data =
-            await response.json();
+                const isReal = data.result === "REAL NEWS";
+                const confidence = Math.max(
+                    0,
+                    Math.min(100, Number(data.confidence) || 0)
+                );
 
+                resultCard.classList.toggle("real", isReal);
+                predictionText.className = isReal ? "" : "fake";
+                predictionText.textContent = isReal ? "Real News" : "Fake News";
+                predictionMessage.textContent = isReal
+                    ? "This news is likely to be real."
+                    : "This news is likely to be fake.";
 
-        if(!response.ok){
+                statusIcon.className = isReal
+                    ? "status-icon"
+                    : "status-icon fake";
+                statusIcon.textContent = isReal ? "✓" : "×";
 
-            throw new Error(
-                data.error ||
-                "Prediction failed"
-            );
+                confidenceText.textContent = confidence.toFixed(2) + "%";
 
+                setTimeout(() => {
+                    progressBar.style.width = confidence + "%";
+                }, 50);
+
+                addHistory(news, isReal ? "Real" : "Fake", confidence);
+
+            } catch (error) {
+                console.error(error);
+
+                resultCard.classList.remove("real");
+                predictionText.className = "fake";
+                predictionText.textContent = "Error";
+                predictionMessage.textContent =
+                    "Something went wrong. Please check the backend.";
+                statusIcon.className = "status-icon fake";
+                statusIcon.textContent = "!";
+                confidenceText.textContent = "0%";
+                progressBar.style.width = "0%";
+            } finally {
+                detectBtn.disabled = false;
+                detectBtn.innerHTML = "🔍 &nbsp; Detect News";
+            }
         }
 
-
-        /* Prediction */
-
-        const isReal =
-            data.result === "REAL NEWS";
-
-
-        const confidence =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    Number(
-                        data.confidence
-                    ) || 0
-                )
+        function addHistory(news, result, confidence) {
+            const history = JSON.parse(
+                localStorage.getItem("fakeNewsHistory") || "[]"
             );
 
+            history.unshift({
+                news: news,
+                result: result,
+                confidence: confidence,
+                time: new Date().toLocaleTimeString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+            });
 
-        /* Result */
-
-        if(isReal){
-
-            result.style.background =
-                "#dcfce7";
-
-            result.style.color =
-                "#166534";
-
-            result.innerText =
-                "✅ REAL NEWS";
-
-        }
-
-        else{
-
-            result.style.background =
-                "#fee2e2";
-
-            result.style.color =
-                "#991b1b";
-
-            result.innerText =
-                "❌ FAKE NEWS";
-
-        }
-
-
-        /* Confidence */
-
-        confidenceBox.style.display =
-            "block";
-
-
-        confidenceText.textContent =
-            confidence.toFixed(2) +
-            "%";
-
-
-        progressBar.style.width =
-            confidence + "%";
-
-
-        /* Save successful prediction
-           for History */
-
-        saveHistory(
-            news,
-            isReal
-                ? "Real"
-                : "Fake",
-            confidence
-        );
-
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-
-        result.style.display =
-            "block";
-
-        result.style.background =
-            "#fee2e2";
-
-        result.style.color =
-            "#991b1b";
-
-        result.innerText =
-            "⚠️ " +
-            (
-                error.message ||
-                "Unable to connect to backend."
+            localStorage.setItem(
+                "fakeNewsHistory",
+                JSON.stringify(history.slice(0, 10))
             );
 
+            renderHistory();
+        }
 
-        confidenceBox.style.display =
-            "none";
+        function renderHistory() {
+            const list = document.getElementById("historyList");
+            const history = JSON.parse(
+                localStorage.getItem("fakeNewsHistory") || "[]"
+            );
 
-    }
+            if (history.length === 0) {
+                list.innerHTML =
+                    '<div class="empty-history">No news checked yet.</div>';
+                return;
+            }
 
+            list.innerHTML = history.map(item => `
+                <div class="history-row">
+                    <div class="history-news" title="${escapeHtml(item.news)}">
+                        ${escapeHtml(item.news)}
+                    </div>
+                    <div class="badge ${item.result.toLowerCase()}">
+                        ${item.result}
+                    </div>
+                    <div class="history-confidence">
+                        ${Number(item.confidence).toFixed(0)}%
+                    </div>
+                    <div class="history-time">${item.time}</div>
+                </div>
+            `).join("");
+        }
 
-    finally{
+        function clearHistory() {
+            localStorage.removeItem("fakeNewsHistory");
+            renderHistory();
+        }
 
-        button.disabled =
-            false;
+        function escapeHtml(text) {
+            return String(text)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
 
-        button.innerHTML =
-            "🔍 Check News";
-
-    }
-
-}
-
-
-/* ================================
-   CLEAR NEWS
-================================ */
-
-function clearNews(){
-
-    newsText.value =
-        "";
-
-    counter.textContent =
-        "0";
-
-
-    document.getElementById(
-        "result"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "confidenceBox"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "progressBar"
-    ).style.width =
-        "0%";
-
-
-    document.getElementById(
-        "confidenceText"
-    ).textContent =
-        "0%";
-
-}
-
-
-/* ================================
-   CLEAR HISTORY
-================================ */
-
-function clearHistory(){
-
-    const confirmDelete =
-        confirm(
-            "Are you sure you want to clear all detection history?"
-        );
-
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-
-    localStorage.removeItem(
-        "fakeNewsHistory"
-    );
-
-
-    renderHistory();
-
-}
-
-
-/* ================================
-   START
-================================ */
-
-renderHistory();
-
-</script>
-
+        setTodayDate();
+        loadDarkMode();
+        renderHistory();
+    </script>
 </body>
 </html>
