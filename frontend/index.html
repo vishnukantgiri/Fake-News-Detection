@@ -33,7 +33,7 @@ body{
 
 .header{
     text-align:center;
-    margin-bottom:25px;
+    margin-bottom:22px;
 }
 
 .icon{
@@ -52,7 +52,7 @@ h1{
     font-size:15px;
 }
 
-/* Navigation */
+/* NAVIGATION */
 
 .nav{
     display:flex;
@@ -62,14 +62,13 @@ h1{
 
 .nav button{
     flex:1;
-    padding:11px;
+    padding:12px;
     border:1px solid #dbe3ef;
     background:#fff;
     border-radius:10px;
     color:#334155;
     font-weight:bold;
     cursor:pointer;
-    transition:.2s;
 }
 
 .nav button:hover{
@@ -79,9 +78,10 @@ h1{
 .nav button.active{
     background:#2563eb;
     color:#fff;
+    border-color:#2563eb;
 }
 
-/* Pages */
+/* PAGES */
 
 .page{
     display:none;
@@ -92,7 +92,7 @@ h1{
     display:block;
 }
 
-/* Textarea */
+/* TEXTAREA */
 
 textarea{
     width:100%;
@@ -115,7 +115,14 @@ textarea:focus{
     box-shadow:0 0 0 4px rgba(37,99,235,.1);
 }
 
-/* Buttons */
+.counter{
+    text-align:right;
+    color:#64748b;
+    font-size:12px;
+    margin-top:5px;
+}
+
+/* BUTTONS */
 
 .buttons{
     display:flex;
@@ -136,11 +143,6 @@ textarea:focus{
 .check-btn{
     background:linear-gradient(135deg,#2563eb,#1d4ed8);
     color:#fff;
-    box-shadow:0 5px 15px rgba(37,99,235,.3);
-}
-
-.check-btn:hover{
-    transform:translateY(-1px);
 }
 
 .clear-btn{
@@ -148,7 +150,7 @@ textarea:focus{
     color:#334155;
 }
 
-/* Result */
+/* RESULT */
 
 #result{
     display:none;
@@ -160,7 +162,7 @@ textarea:focus{
     font-weight:bold;
 }
 
-/* Confidence */
+/* CONFIDENCE */
 
 #confidenceBox{
     display:none;
@@ -198,7 +200,7 @@ textarea:focus{
     transition:width .7s;
 }
 
-/* Statistics */
+/* STATISTICS */
 
 .stats-grid{
     display:grid;
@@ -222,7 +224,7 @@ textarea:focus{
 }
 
 .stat strong{
-    font-size:26px;
+    font-size:27px;
     color:#172554;
 }
 
@@ -238,7 +240,7 @@ textarea:focus{
     color:#2563eb;
 }
 
-/* Statistics chart */
+/* CHART */
 
 .chart{
     margin-top:20px;
@@ -253,7 +255,7 @@ textarea:focus{
 }
 
 .chart-bg{
-    height:14px;
+    height:15px;
     background:#fee2e2;
     border-radius:20px;
     overflow:hidden;
@@ -266,7 +268,19 @@ textarea:focus{
     transition:width .5s;
 }
 
-/* History */
+.refresh-btn{
+    margin-top:16px;
+    width:100%;
+    padding:12px;
+    border:1px solid #dbe3ef;
+    background:#fff;
+    border-radius:10px;
+    color:#2563eb;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* HISTORY */
 
 .history{
     border:1px solid #e2e8f0;
@@ -277,6 +291,7 @@ textarea:focus{
 .history-head{
     display:flex;
     justify-content:space-between;
+    align-items:center;
     padding:14px 16px;
     background:#f8fafc;
     font-weight:bold;
@@ -292,7 +307,7 @@ textarea:focus{
 
 .history-row{
     display:grid;
-    grid-template-columns:1fr 70px 70px;
+    grid-template-columns:1fr 70px 70px 80px;
     gap:10px;
     padding:12px 15px;
     border-top:1px solid #e2e8f0;
@@ -315,13 +330,17 @@ textarea:focus{
     font-weight:bold;
 }
 
+.history-time{
+    color:#64748b;
+}
+
 .empty{
     text-align:center;
     color:#64748b;
     padding:22px;
 }
 
-/* Loading */
+/* LOADING */
 
 .loading{
     display:inline-flex;
@@ -355,7 +374,7 @@ textarea:focus{
     }
 }
 
-/* Footer */
+/* FOOTER */
 
 .footer{
     text-align:center;
@@ -364,7 +383,7 @@ textarea:focus{
     font-size:13px;
 }
 
-/* Mobile */
+/* MOBILE */
 
 @media(max-width:650px){
 
@@ -388,7 +407,7 @@ textarea:focus{
 
     .nav button{
         white-space:nowrap;
-        min-width:105px;
+        min-width:110px;
     }
 
     .buttons{
@@ -400,10 +419,10 @@ textarea:focus{
     }
 
     .history-row{
-        grid-template-columns:1fr 60px;
+        grid-template-columns:1fr 65px 65px;
     }
 
-    .history-confidence{
+    .history-time{
         display:none;
     }
 
@@ -418,264 +437,290 @@ textarea:focus{
 
 <div class="container">
 
-    <!-- HEADER -->
+<!-- HEADER -->
 
-    <div class="header">
+<div class="header">
 
-        <div class="icon">📰</div>
+    <div class="icon">🛡️</div>
 
-        <h1>Fake News Detection</h1>
+    <h1>Fake News Detection</h1>
 
-        <p class="subtitle">
-            Enter a news article and check whether it is Real or Fake.
-        </p>
+    <p class="subtitle">
+        AI-powered news authenticity checker
+    </p>
+
+</div>
+
+
+<!-- NAVIGATION -->
+
+<div class="nav">
+
+    <button
+        id="detectTab"
+        class="active"
+        onclick="showPage('detectPage','detectTab')">
+
+        🔍 Detect News
+
+    </button>
+
+    <button
+        id="statsTab"
+        onclick="showPage('statsPage','statsTab')">
+
+        📊 Statistics
+
+    </button>
+
+    <button
+        id="historyTab"
+        onclick="showPage('historyPage','historyTab')">
+
+        🕒 History
+
+    </button>
+
+</div>
+
+
+<!-- DETECT PAGE -->
+
+<section
+    id="detectPage"
+    class="page active">
+
+    <textarea
+        id="newsText"
+        maxlength="5000"
+        placeholder="Paste your news article or text here...">
+    </textarea>
+
+    <div class="counter">
+
+        <span id="counter">0</span> / 5000
 
     </div>
 
 
-    <!-- NAVIGATION -->
-
-    <div class="nav">
+    <div class="buttons">
 
         <button
-            class="active"
-            onclick="showPage('detectPage',this)">
-            🔍 Detect News
+            class="check-btn"
+            id="checkBtn"
+            onclick="checkNews()">
+
+            🔍 Check News
+
         </button>
 
-        <button
-            onclick="showPage('statsPage',this)">
-            📊 Statistics
-        </button>
 
         <button
-            onclick="showPage('historyPage',this)">
-            🕒 History
+            class="clear-btn"
+            onclick="clearNews()">
+
+            🗑 Clear
+
         </button>
 
     </div>
 
 
-    <!-- DETECT PAGE -->
+    <!-- RESULT -->
 
-    <section id="detectPage" class="page active">
+    <div id="result"></div>
 
-        <textarea
-            id="newsText"
-            maxlength="5000"
-            placeholder="Paste your news article here...">
-        </textarea>
 
-        <div
-            style="text-align:right;color:#64748b;font-size:12px;margin-top:5px">
+    <!-- CONFIDENCE -->
 
-            <span id="counter">0</span> / 5000
+    <div id="confidenceBox">
+
+        <div class="confidence-title">
+
+            <span>
+                Confidence Score
+            </span>
+
+            <span id="confidenceText">
+                0%
+            </span>
 
         </div>
 
 
-        <div class="buttons">
+        <div class="progress">
 
-            <button
-                class="check-btn"
-                id="checkBtn"
-                onclick="checkNews()">
+            <div id="progressBar"></div>
 
-                🔍 Check News
+        </div>
 
+    </div>
+
+</section>
+
+
+<!-- STATISTICS PAGE -->
+
+<section
+    id="statsPage"
+    class="page">
+
+    <div class="stats-grid">
+
+        <div class="stat">
+
+            <span>
+                📰 Total Checked
+            </span>
+
+            <strong id="totalStat">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat real">
+
+            <span>
+                ✅ Real News
+            </span>
+
+            <strong id="realStat">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat fake">
+
+            <span>
+                ❌ Fake News
+            </span>
+
+            <strong id="fakeStat">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat conf">
+
+            <span>
+                🎯 Avg. Confidence
+            </span>
+
+            <strong id="avgStat">
+                0%
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- REAL NEWS RATIO -->
+
+    <div class="chart">
+
+        <div class="chart-title">
+
+            <span>
+                Real News Ratio
+            </span>
+
+            <b id="ratioText">
+                0%
+            </b>
+
+        </div>
+
+
+        <div class="chart-bg">
+
+            <div
+                class="chart-fill"
+                id="ratioBar">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="refresh-btn"
+        onclick="updateStats()">
+
+        ↻ Refresh Statistics
+
+    </button>
+
+
+    <p
+        class="subtitle"
+        style="margin-top:15px">
+
+        Statistics are automatically updated after
+        every successful news detection.
+
+    </p>
+
+</section>
+
+
+<!-- HISTORY PAGE -->
+
+<section
+    id="historyPage"
+    class="page">
+
+    <div class="history">
+
+        <div class="history-head">
+
+            <span>
+                🕒 Recent Detection History
+            </span>
+
+            <button onclick="clearHistory()">
+                Clear All
             </button>
 
-
-            <button
-                class="clear-btn"
-                onclick="clearNews()">
-
-                🗑 Clear
-
-            </button>
-
         </div>
 
 
-        <!-- RESULT -->
+        <div id="historyList">
 
-        <div id="result"></div>
-
-
-        <!-- CONFIDENCE -->
-
-        <div id="confidenceBox">
-
-            <div class="confidence-title">
-
-                <span>Confidence</span>
-
-                <span id="confidenceText">
-                    0%
-                </span>
-
-            </div>
-
-            <div class="progress">
-
-                <div id="progressBar"></div>
-
+            <div class="empty">
+                No news checked yet.
             </div>
 
         </div>
-
-    </section>
-
-
-    <!-- STATISTICS PAGE -->
-
-    <section id="statsPage" class="page">
-
-        <div class="stats-grid">
-
-            <div class="stat">
-
-                <span>
-                    📰 Total Checked
-                </span>
-
-                <strong id="totalStat">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="stat real">
-
-                <span>
-                    ✅ Real News
-                </span>
-
-                <strong id="realStat">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="stat fake">
-
-                <span>
-                    ❌ Fake News
-                </span>
-
-                <strong id="fakeStat">
-                    0
-                </strong>
-
-            </div>
-
-
-            <div class="stat conf">
-
-                <span>
-                    🎯 Avg. Confidence
-                </span>
-
-                <strong id="avgStat">
-                    0%
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- REAL NEWS RATIO -->
-
-        <div class="chart">
-
-            <div class="chart-title">
-
-                <span>
-                    Real News Ratio
-                </span>
-
-                <b id="ratioText">
-                    0%
-                </b>
-
-            </div>
-
-
-            <div class="chart-bg">
-
-                <div
-                    class="chart-fill"
-                    id="ratioBar">
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <p
-            class="subtitle"
-            style="margin-top:18px">
-
-            Statistics are calculated automatically from your
-            detection history on this browser.
-
-        </p>
-
-    </section>
-
-
-    <!-- HISTORY PAGE -->
-
-    <section id="historyPage" class="page">
-
-        <div class="history">
-
-            <div class="history-head">
-
-                <span>
-                    Recent Detection History
-                </span>
-
-                <button onclick="clearHistory()">
-                    Clear All
-                </button>
-
-            </div>
-
-
-            <div id="historyList">
-
-                <div class="empty">
-                    No news checked yet.
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- FOOTER -->
-
-    <div class="footer">
-
-        AI-powered Fake News Detection System
 
     </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+    🛡️ AI-powered Fake News Detection System
+
+</div>
 
 </div>
 
 
 <script>
 
-/* =========================
-   BASIC ELEMENTS
-========================= */
+/* ================================
+   ELEMENTS
+================================ */
 
 const newsText =
     document.getElementById("newsText");
@@ -684,7 +729,9 @@ const counter =
     document.getElementById("counter");
 
 
-/* Character Counter */
+/* ================================
+   CHARACTER COUNTER
+================================ */
 
 newsText.addEventListener(
     "input",
@@ -697,23 +744,38 @@ newsText.addEventListener(
 );
 
 
-/* =========================
-   HISTORY
-========================= */
+/* ================================
+   GET HISTORY
+================================ */
 
 function getHistory(){
 
     try{
 
-        return JSON.parse(
+        const data =
             localStorage.getItem(
                 "fakeNewsHistory"
-            ) || "[]"
-        );
+            );
+
+        if(!data){
+            return [];
+        }
+
+        const history =
+            JSON.parse(data);
+
+        return Array.isArray(history)
+            ? history
+            : [];
 
     }
 
     catch(error){
+
+        console.error(
+            "History error:",
+            error
+        );
 
         return [];
 
@@ -722,14 +784,40 @@ function getHistory(){
 }
 
 
-/* Save detection */
+/* ================================
+   SAVE HISTORY
+================================ */
 
-function saveHistory(item){
+function saveHistory(
+    news,
+    result,
+    confidence
+){
 
     const history =
         getHistory();
 
-    history.unshift(item);
+
+    history.unshift({
+
+        news: news,
+
+        result: result,
+
+        confidence:
+            Number(confidence),
+
+        time:
+            new Date().toLocaleTimeString(
+                "en-IN",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit"
+                }
+            )
+
+    });
+
 
     localStorage.setItem(
         "fakeNewsHistory",
@@ -738,6 +826,7 @@ function saveHistory(item){
         )
     );
 
+
     renderHistory();
 
     updateStats();
@@ -745,35 +834,51 @@ function saveHistory(item){
 }
 
 
-/* =========================
-   SECURITY
-========================= */
+/* ================================
+   ESCAPE HTML
+================================ */
 
 function escapeHtml(text){
 
     return String(text)
 
-        .replaceAll("&","&amp;")
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
 
-        .replaceAll("<","&lt;")
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
 
-        .replaceAll(">","&gt;")
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
 
-        .replaceAll('"',"&quot;")
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
 
-        .replaceAll("'","&#039;");
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
 
-/* =========================
+/* ================================
    RENDER HISTORY
-========================= */
+================================ */
 
 function renderHistory(){
 
     const history =
         getHistory();
+
 
     const list =
         document.getElementById(
@@ -784,7 +889,9 @@ function renderHistory(){
     if(history.length === 0){
 
         list.innerHTML =
-            '<div class="empty">No news checked yet.</div>';
+            '<div class="empty">' +
+            'No news checked yet.' +
+            '</div>';
 
         return;
 
@@ -794,51 +901,69 @@ function renderHistory(){
     list.innerHTML =
         history
         .slice(0,10)
-        .map(function(item){
+        .map(
+            function(item){
 
-            return `
-
-            <div class="history-row">
-
-                <div
-                    class="history-news"
-                    title="${escapeHtml(item.news)}">
-
-                    ${escapeHtml(item.news)}
-
-                </div>
-
-
-                <div class="${
+                const resultClass =
                     item.result === "Real"
                     ? "real-b"
-                    : "fake-b"
-                }">
+                    : "fake-b";
 
-                    ${item.result}
+
+                return `
+
+                <div class="history-row">
+
+                    <div
+                        class="history-news"
+                        title="${escapeHtml(
+                            item.news
+                        )}">
+
+                        ${escapeHtml(
+                            item.news
+                        )}
+
+                    </div>
+
+
+                    <div
+                        class="${resultClass}">
+
+                        ${item.result}
+
+                    </div>
+
+
+                    <div>
+
+                        ${Number(
+                            item.confidence
+                        ).toFixed(1)}%
+
+                    </div>
+
+
+                    <div class="history-time">
+
+                        ${item.time || ""}
+
+                    </div>
 
                 </div>
 
+                `;
 
-                <div class="history-confidence">
-
-                    ${Number(item.confidence).toFixed(0)}%
-
-                </div>
-
-            </div>
-
-            `;
-
-        })
+            }
+        )
         .join("");
 
 }
 
 
-/* =========================
-   STATISTICS
-========================= */
+/* ================================
+   UPDATE STATISTICS
+================================ */
 
 function updateStats(){
 
@@ -861,52 +986,64 @@ function updateStats(){
 
 
     const fake =
-        total - real;
+        history.filter(
+            function(item){
+
+                return item.result === "Fake";
+
+            }
+        ).length;
 
 
-    const average =
-        total
+    let average = 0;
 
-        ?
 
-        history.reduce(
-            function(sum,item){
+    if(total > 0){
 
-                return sum +
-                    Number(
-                        item.confidence || 0
-                    );
+        const totalConfidence =
+            history.reduce(
+                function(sum,item){
 
-            },
-            0
-        ) / total
+                    return sum +
+                        Number(
+                            item.confidence || 0
+                        );
 
+                },
+                0
+            );
+
+
+        average =
+            totalConfidence / total;
+
+    }
+
+
+    const realRatio =
+        total > 0
+        ? (real / total) * 100
         : 0;
 
 
-    const ratio =
-        total
-
-        ?
-
-        (real / total) * 100
-
-        : 0;
-
+    /* Cards */
 
     document.getElementById(
         "totalStat"
-    ).textContent = total;
+    ).textContent =
+        total;
 
 
     document.getElementById(
         "realStat"
-    ).textContent = real;
+    ).textContent =
+        real;
 
 
     document.getElementById(
         "fakeStat"
-    ).textContent = fake;
+    ).textContent =
+        fake;
 
 
     document.getElementById(
@@ -915,27 +1052,29 @@ function updateStats(){
         average.toFixed(1) + "%";
 
 
+    /* Graph */
+
     document.getElementById(
         "ratioText"
     ).textContent =
-        ratio.toFixed(1) + "%";
+        realRatio.toFixed(1) + "%";
 
 
     document.getElementById(
         "ratioBar"
     ).style.width =
-        ratio + "%";
+        realRatio + "%";
 
 }
 
 
-/* =========================
-   PAGE SWITCHING
-========================= */
+/* ================================
+   PAGE SWITCH
+================================ */
 
 function showPage(
     pageId,
-    button
+    tabId
 ){
 
     document
@@ -959,9 +1098,9 @@ function showPage(
     document
         .querySelectorAll(".nav button")
         .forEach(
-            function(btn){
+            function(button){
 
-                btn.classList.remove(
+                button.classList.remove(
                     "active"
                 );
 
@@ -969,7 +1108,9 @@ function showPage(
         );
 
 
-    button.classList.add("active");
+    document
+        .getElementById(tabId)
+        .classList.add("active");
 
 
     if(pageId === "statsPage"){
@@ -985,18 +1126,12 @@ function showPage(
 
     }
 
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-
 }
 
 
-/* =========================
+/* ================================
    CHECK NEWS
-========================= */
+================================ */
 
 async function checkNews(){
 
@@ -1028,13 +1163,13 @@ async function checkNews(){
         );
 
 
-    const btn =
+    const button =
         document.getElementById(
             "checkBtn"
         );
 
 
-    /* Empty input */
+    /* Empty */
 
     if(!news){
 
@@ -1048,7 +1183,7 @@ async function checkNews(){
             "#856404";
 
         result.innerText =
-            "⚠️ Please enter some news.";
+            "⚠️ Please enter news text first.";
 
         confidenceBox.style.display =
             "none";
@@ -1060,20 +1195,9 @@ async function checkNews(){
 
     /* Loading */
 
-    btn.disabled = true;
+    button.disabled = true;
 
-
-    result.style.display =
-        "block";
-
-    result.style.background =
-        "#e0f2fe";
-
-    result.style.color =
-        "#0369a1";
-
-
-    result.innerHTML = `
+    button.innerHTML = `
 
         <span class="loading">
 
@@ -1090,17 +1214,31 @@ async function checkNews(){
     `;
 
 
+    result.style.display =
+        "block";
+
+    result.style.background =
+        "#e0f2fe";
+
+    result.style.color =
+        "#0369a1";
+
+    result.innerText =
+        "Checking...";
+
+
     confidenceBox.style.display =
         "none";
 
 
     try{
 
+        /* Backend request */
+
         const response =
             await fetch(
                 "/predict",
                 {
-
                     method:"POST",
 
                     headers:{
@@ -1112,7 +1250,6 @@ async function checkNews(){
                         JSON.stringify({
                             news:news
                         })
-
                 }
             );
 
@@ -1125,7 +1262,7 @@ async function checkNews(){
 
             throw new Error(
                 data.error ||
-                "Server error"
+                "Prediction failed"
             );
 
         }
@@ -1149,24 +1286,33 @@ async function checkNews(){
             );
 
 
-        /* Result UI */
+        /* Result */
 
-        result.style.background =
-            isReal
-            ? "#dcfce7"
-            : "#fee2e2";
+        if(isReal){
 
+            result.style.background =
+                "#dcfce7";
 
-        result.style.color =
-            isReal
-            ? "#166534"
-            : "#991b1b";
+            result.style.color =
+                "#166534";
 
+            result.innerText =
+                "✅ REAL NEWS";
 
-        result.innerText =
-            isReal
-            ? "✅ REAL NEWS"
-            : "❌ FAKE NEWS";
+        }
+
+        else{
+
+            result.style.background =
+                "#fee2e2";
+
+            result.style.color =
+                "#991b1b";
+
+            result.innerText =
+                "❌ FAKE NEWS";
+
+        }
 
 
         /* Confidence */
@@ -1175,7 +1321,7 @@ async function checkNews(){
             "block";
 
 
-        confidenceText.innerText =
+        confidenceText.textContent =
             confidence.toFixed(2) +
             "%";
 
@@ -1184,34 +1330,20 @@ async function checkNews(){
             confidence + "%";
 
 
-        /* Save History */
+        /* IMPORTANT:
+           Save successful prediction
+           for Statistics */
 
-        saveHistory({
-
-            news:news,
-
-            result:
-                isReal
+        saveHistory(
+            news,
+            isReal
                 ? "Real"
                 : "Fake",
+            confidence
+        );
 
-            confidence:
-                confidence,
-
-            time:
-                new Date()
-                .toLocaleTimeString(
-                    "en-IN",
-                    {
-                        hour:"2-digit",
-                        minute:"2-digit"
-                    }
-                )
-
-        });
 
     }
-
 
     catch(error){
 
@@ -1221,20 +1353,17 @@ async function checkNews(){
         result.style.display =
             "block";
 
-
         result.style.background =
             "#fee2e2";
 
-
         result.style.color =
             "#991b1b";
-
 
         result.innerText =
             "⚠️ " +
             (
                 error.message ||
-                "Something went wrong. Please check the backend."
+                "Unable to connect to backend."
             );
 
 
@@ -1246,57 +1375,69 @@ async function checkNews(){
 
     finally{
 
-        btn.disabled = false;
+        button.disabled =
+            false;
+
+        button.innerHTML =
+            "🔍 Check News";
 
     }
 
 }
 
 
-/* =========================
+/* ================================
    CLEAR NEWS
-========================= */
+================================ */
 
 function clearNews(){
 
-    newsText.value = "";
+    newsText.value =
+        "";
 
-    counter.textContent = "0";
+    counter.textContent =
+        "0";
 
 
     document.getElementById(
         "result"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 
     document.getElementById(
         "confidenceBox"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 
     document.getElementById(
         "progressBar"
-    ).style.width = "0%";
+    ).style.width =
+        "0%";
 
 
     document.getElementById(
         "confidenceText"
-    ).innerText = "0%";
+    ).textContent =
+        "0%";
 
 }
 
 
-/* =========================
+/* ================================
    CLEAR HISTORY
-========================= */
+================================ */
 
 function clearHistory(){
 
-    if(
-        !confirm(
-            "Clear all detection history?"
-        )
-    ){
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to clear all detection history?"
+        );
+
+
+    if(!confirmDelete){
 
         return;
 
@@ -1315,9 +1456,9 @@ function clearHistory(){
 }
 
 
-/* =========================
-   INITIAL LOAD
-========================= */
+/* ================================
+   START
+================================ */
 
 renderHistory();
 
