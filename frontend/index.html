@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Fake News Detection</title>
 
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -18,951 +20,3051 @@
             --green-dark: #15803d;
             --green-soft: #ecfdf3;
             --green-border: #d1fae5;
+
             --text: #172033;
             --muted: #64748b;
+
             --border: #e5e7eb;
             --panel: #ffffff;
             --bg: #f7faf8;
+
             --danger: #dc2626;
+            --danger-soft: #fee2e2;
+
+            --blue: #2563eb;
+            --blue-soft: #eff6ff;
         }
+
+
+        /* =========================
+           BODY
+        ========================= */
 
         body {
-            min-height: 100vh;
+
+            height: 100vh;
+
             background: var(--bg);
+
             color: var(--text);
-            overflow-x: hidden;
+
+            overflow: hidden;
         }
 
+
         body::before {
+
             content: "";
+
             position: fixed;
+
             width: 520px;
             height: 260px;
+
             right: -120px;
             top: -90px;
+
             background: #d9f8e5;
+
             border-radius: 0 0 0 70%;
+
             z-index: -1;
         }
 
+
+        /* =========================
+           DARK MODE
+        ========================= */
+
         body.dark {
+
             --text: #f1f5f9;
+
             --muted: #94a3b8;
+
             --border: #334155;
+
             --panel: #111827;
+
             --bg: #0b1220;
+
             --green-soft: #0f2a1a;
+
             --green-border: #14532d;
+
+            --danger-soft: #3f1515;
+
+            --blue-soft: #172554;
+
             background: var(--bg);
         }
 
+
+        /* =========================
+           APP
+        ========================= */
+
         .app {
-            min-height: 100vh;
+
+            height: 100vh;
+
             display: flex;
+
+            overflow: hidden;
         }
 
-        /* Sidebar */
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
         .sidebar {
+
             width: 285px;
+
             flex-shrink: 0;
+
+            height: 100vh;
+
             background: var(--panel);
+
             border-right: 1px solid var(--border);
+
             padding: 34px 22px 24px;
+
             display: flex;
+
             flex-direction: column;
+
+            /* Sidebar itself does NOT scroll */
+
+            overflow: hidden;
+
+            position: relative;
         }
+
 
         .brand {
+
             display: flex;
+
             align-items: flex-start;
+
             gap: 13px;
+
             padding: 0 10px;
+
+            flex-shrink: 0;
         }
+
 
         .brand-icon {
+
             width: 45px;
             height: 45px;
+
             border-radius: 13px;
+
             background: var(--green);
+
             color: white;
+
             display: grid;
+
             place-items: center;
+
             font-size: 23px;
-            box-shadow: 0 8px 20px rgba(22, 163, 74, .18);
+
+            box-shadow:
+                0 8px 20px rgba(22, 163, 74, .18);
+
+            flex-shrink: 0;
         }
 
+
         .brand h2 {
+
             font-size: 21px;
+
             line-height: 1.12;
+
             color: var(--text);
         }
 
+
         .brand p {
+
             color: var(--muted);
+
             font-size: 13px;
+
             margin-top: 8px;
         }
 
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
         .nav {
+
             margin-top: 45px;
+
             display: grid;
+
             gap: 8px;
         }
 
+
         .nav-item {
+
             border: 0;
+
             background: transparent;
+
             color: var(--muted);
+
             width: 100%;
+
             padding: 14px 15px;
+
             border-radius: 11px;
+
             display: flex;
+
             align-items: center;
+
             gap: 14px;
+
             text-align: left;
+
             font-size: 15px;
+
             cursor: pointer;
+
             transition: .2s ease;
         }
+
 
         .nav-item:hover,
         .nav-item.active {
+
             color: var(--green-dark);
+
             background: var(--green-soft);
         }
 
+
         .nav-icon {
+
             width: 22px;
+
             text-align: center;
+
             font-size: 19px;
         }
 
+
+        /* =========================
+           SIDEBAR CARD
+        ========================= */
+
         .sidebar-card {
+
             margin: auto 13px 22px;
+
             padding: 18px 14px;
+
             border: 1px solid var(--border);
+
             border-radius: 16px;
+
             text-align: center;
-            background: linear-gradient(180deg, var(--panel), var(--green-soft));
+
+            background:
+                linear-gradient(
+                    180deg,
+                    var(--panel),
+                    var(--green-soft)
+                );
         }
 
+
         .sidebar-card .shield {
+
             font-size: 45px;
+
             margin-bottom: 8px;
         }
 
+
         .sidebar-card strong {
+
             display: block;
+
             font-size: 14px;
         }
 
+
         .sidebar-card p {
+
             color: var(--muted);
+
             font-size: 12px;
+
             line-height: 1.5;
+
             margin-top: 8px;
         }
 
+
+        /* =========================
+           DARK MODE SWITCH
+        ========================= */
+
         .dark-toggle {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             padding: 14px 12px;
+
             border: 1px solid var(--border);
+
             border-radius: 13px;
+
             color: var(--muted);
+
             font-size: 14px;
+
+            flex-shrink: 0;
         }
+
 
         .switch {
+
             width: 42px;
+
             height: 23px;
+
             border: 0;
+
             border-radius: 20px;
+
             background: #cbd5e1;
+
             cursor: pointer;
+
             position: relative;
+
             transition: .2s;
         }
+
 
         .switch::after {
+
             content: "";
+
             position: absolute;
+
             width: 17px;
+
             height: 17px;
+
             top: 3px;
+
             left: 3px;
+
             background: white;
+
             border-radius: 50%;
+
             transition: .2s;
         }
 
+
         body.dark .switch {
+
             background: var(--green);
         }
 
+
         body.dark .switch::after {
+
             left: 22px;
         }
 
-        /* Main */
+
+        /* =========================
+           MAIN
+        ========================= */
+
         .main {
+
             flex: 1;
+
             min-width: 0;
+
+            height: 100vh;
+
             padding: 42px 45px 25px;
+
+            /* ONLY MAIN SCROLLS */
+
+            overflow-y: auto;
+
+            overflow-x: hidden;
+
+            scroll-behavior: smooth;
+
+            scrollbar-width: thin;
+
+            scrollbar-color:
+                #cbd5e1
+                transparent;
         }
 
+
+        .main::-webkit-scrollbar {
+
+            width: 7px;
+        }
+
+
+        .main::-webkit-scrollbar-track {
+
+            background: transparent;
+        }
+
+
+        .main::-webkit-scrollbar-thumb {
+
+            background: #cbd5e1;
+
+            border-radius: 10px;
+        }
+
+
+        body.dark .main::-webkit-scrollbar-thumb {
+
+            background: #475569;
+        }
+
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
         .topbar {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: flex-start;
+
             gap: 20px;
+
             margin-bottom: 27px;
         }
 
+
         .title-wrap {
+
             display: flex;
+
             align-items: flex-start;
+
             gap: 14px;
         }
 
+
         .title-shield {
+
             font-size: 38px;
+
             line-height: 1;
         }
 
+
         h1 {
+
             font-size: 32px;
+
             letter-spacing: -.5px;
+
             line-height: 1.1;
         }
 
+
         .subtitle {
+
             color: var(--muted);
+
             margin-top: 8px;
+
             font-size: 15px;
         }
 
+
         .date-card {
+
             background: var(--green);
+
             color: white;
+
             padding: 12px 17px;
+
             border-radius: 13px;
+
             min-width: 145px;
-            box-shadow: 0 10px 25px rgba(22, 163, 74, .17);
+
+            box-shadow:
+                0 10px 25px
+                rgba(22, 163, 74, .17);
         }
 
+
         .date-card small {
+
             display: block;
+
             opacity: .88;
+
             font-size: 11px;
+
             margin-bottom: 4px;
         }
 
+
         .date-card strong {
+
             font-size: 14px;
         }
 
+
+        /* =========================
+           PANELS
+        ========================= */
+
         .panel {
+
             background: var(--panel);
+
             border: 1px solid var(--border);
+
             border-radius: 17px;
-            box-shadow: 0 8px 28px rgba(15, 23, 42, .045);
+
+            box-shadow:
+                0 8px 28px
+                rgba(15, 23, 42, .045);
         }
 
+
         .input-panel {
+
             padding: 27px 30px 18px;
         }
 
+
         .section-title {
+
             color: var(--green-dark);
+
             font-size: 17px;
+
             font-weight: 700;
+
             margin-bottom: 16px;
         }
 
+
         textarea {
+
             width: 100%;
+
             height: 145px;
+
             padding: 17px;
-            border: 1px solid #dbe3df;
+
+            border:
+                1px solid #dbe3df;
+
             border-radius: 12px;
+
             resize: vertical;
+
             min-height: 120px;
+
             font-size: 15px;
+
             line-height: 1.6;
+
             outline: none;
+
             color: var(--text);
+
             background: var(--panel);
+
             transition: .2s;
         }
 
+
         textarea:focus {
+
             border-color: var(--green);
-            box-shadow: 0 0 0 4px rgba(22, 163, 74, .09);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(22, 163, 74, .09);
         }
 
+
         textarea::placeholder {
+
             color: #94a3b8;
         }
 
+
         .input-footer {
+
             display: flex;
+
             justify-content: flex-end;
+
             color: var(--muted);
+
             font-size: 12px;
+
             margin: 7px 3px 12px;
         }
 
+
         .detect-wrap {
+
             display: flex;
+
             justify-content: center;
         }
 
+
         .detect-btn {
+
             border: 0;
-            background: linear-gradient(135deg, #16a34a, #15803d);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #16a34a,
+                    #15803d
+                );
+
             color: white;
+
             padding: 13px 31px;
+
             border-radius: 11px;
+
             font-size: 15px;
+
             font-weight: 700;
+
             cursor: pointer;
-            box-shadow: 0 7px 17px rgba(22, 163, 74, .2);
+
+            box-shadow:
+                0 7px 17px
+                rgba(22, 163, 74, .2);
+
             transition: .2s ease;
         }
 
+
         .detect-btn:hover {
+
             transform: translateY(-2px);
-            box-shadow: 0 10px 23px rgba(22, 163, 74, .25);
+
+            box-shadow:
+                0 10px 23px
+                rgba(22, 163, 74, .25);
         }
 
+
         .detect-btn:disabled {
+
             opacity: .7;
+
             cursor: wait;
+
             transform: none;
         }
 
-        /* Result cards */
+
+        /* =========================
+           RESULT
+        ========================= */
+
         .result-grid {
+
             display: grid;
-            grid-template-columns: 1fr 1fr;
+
+            grid-template-columns:
+                1fr 1fr;
+
             gap: 18px;
+
             margin-top: 21px;
         }
 
+
         .result-card {
+
             min-height: 133px;
+
             padding: 24px 28px;
+
             border-radius: 15px;
+
             border: 1px solid var(--border);
+
             background: var(--panel);
         }
 
+
         .result-card.real {
-            background: linear-gradient(135deg, var(--green-soft), var(--panel));
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--green-soft),
+                    var(--panel)
+                );
+
             border-color: var(--green-border);
         }
 
+
         .card-label {
+
             color: var(--muted);
+
             font-size: 13px;
+
             margin-bottom: 10px;
         }
 
+
         .prediction-row {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
         }
 
+
         #predictionText {
+
             font-size: 28px;
+
             color: var(--green-dark);
+
             font-weight: 800;
         }
 
+
         #predictionText.fake {
+
             color: var(--danger);
         }
 
+
         .status-icon {
+
             width: 48px;
+
             height: 48px;
+
             border-radius: 50%;
+
             display: grid;
+
             place-items: center;
+
             background: var(--green);
+
             color: white;
+
             font-size: 25px;
         }
 
+
         .status-icon.fake {
+
             background: var(--danger);
         }
 
+
         .prediction-message {
+
             color: var(--muted);
+
             font-size: 13px;
+
             margin-top: 7px;
         }
 
+
         .confidence-value {
+
             color: var(--green-dark);
+
             font-size: 27px;
+
             font-weight: 800;
+
             margin-bottom: 12px;
         }
 
+
         .progress {
+
             width: 100%;
+
             height: 10px;
+
             background: #e5e7eb;
+
             border-radius: 20px;
+
             overflow: hidden;
         }
 
+
         #progressBar {
+
             width: 0%;
+
             height: 100%;
-            background: linear-gradient(90deg, #16a34a, #22c55e);
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #16a34a,
+                    #22c55e
+                );
+
             border-radius: 20px;
+
             transition: width .7s ease;
         }
 
-        /* History */
+
+        /* =========================
+           HISTORY
+        ========================= */
+
         .history-panel {
+
             margin-top: 21px;
+
             padding: 21px 23px 16px;
         }
 
+
         .history-heading {
+
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
+
             margin-bottom: 13px;
         }
 
+
         .history-heading h3 {
+
             color: var(--green-dark);
+
             font-size: 17px;
         }
 
+
         .clear-history {
+
             border: 0;
+
             background: transparent;
+
             color: var(--muted);
+
             font-size: 18px;
+
             cursor: pointer;
         }
 
+
         .history-list {
-            border: 1px solid var(--border);
+
+            border:
+                1px solid var(--border);
+
             border-radius: 12px;
+
             overflow: hidden;
         }
 
+
         .history-row {
+
             display: grid;
-            grid-template-columns: 1fr 75px 65px 75px;
+
+            grid-template-columns:
+                1fr 75px 65px 75px;
+
             gap: 10px;
+
             align-items: center;
+
             padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
+
+            border-bottom:
+                1px solid var(--border);
+
             font-size: 13px;
         }
 
+
         .history-row:last-child {
+
             border-bottom: 0;
         }
 
+
         .history-news {
+
             white-space: nowrap;
+
             overflow: hidden;
+
             text-overflow: ellipsis;
+
             color: var(--text);
         }
 
+
         .badge {
+
             text-align: center;
+
             padding: 5px 8px;
+
             border-radius: 7px;
+
             font-size: 11px;
+
             font-weight: 700;
         }
 
+
         .badge.real {
+
             color: #15803d;
+
             background: #dcfce7;
         }
 
+
         .badge.fake {
+
             color: #b91c1c;
+
             background: #fee2e2;
         }
 
+
         .history-confidence,
         .history-time {
+
             color: var(--muted);
+
             text-align: right;
         }
 
+
         .empty-history {
+
             padding: 23px;
+
             text-align: center;
+
             color: var(--muted);
+
             font-size: 13px;
         }
 
-        .footer {
-            text-align: center;
-            color: var(--muted);
-            font-size: 12px;
-            margin-top: 20px;
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        .statistics-panel {
+
+            margin-top: 21px;
+
+            padding: 25px;
         }
 
-        .loading {
-            display: inline-flex;
+
+        .statistics-heading {
+
+            display: flex;
+
+            justify-content: space-between;
+
             align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+
+        .statistics-heading h2 {
+
+            color: var(--green-dark);
+
+            font-size: 20px;
+        }
+
+
+        .statistics-heading p {
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+
+        .stats-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .stat-card {
+
+            padding: 18px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            background: var(--panel);
+
+            transition: .2s;
+        }
+
+
+        .stat-card:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(15, 23, 42, .06);
+        }
+
+
+        .stat-icon {
+
+            font-size: 25px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .stat-label {
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .stat-value {
+
+            font-size: 25px;
+
+            font-weight: 800;
+
+            color: var(--text);
+        }
+
+
+        .stat-card.green {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--green-soft),
+                    var(--panel)
+                );
+
+            border-color:
+                var(--green-border);
+        }
+
+
+        .stat-card.green .stat-value {
+
+            color: var(--green-dark);
+        }
+
+
+        .stat-card.red {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--danger-soft),
+                    var(--panel)
+                );
+        }
+
+
+        .stat-card.red .stat-value {
+
+            color: var(--danger);
+        }
+
+
+        .model-info {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 18px;
+        }
+
+
+        .model-box {
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            padding: 20px;
+        }
+
+
+        .model-box h3 {
+
+            font-size: 15px;
+
+            color: var(--green-dark);
+
+            margin-bottom: 15px;
+        }
+
+
+        .model-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 10px 0;
+
+            border-bottom:
+                1px solid var(--border);
+
+            font-size: 13px;
+        }
+
+
+        .model-row:last-child {
+
+            border-bottom: 0;
+        }
+
+
+        .model-row span:first-child {
+
+            color: var(--muted);
+        }
+
+
+        .model-row strong {
+
+            color: var(--text);
+        }
+
+
+        .accuracy-big {
+
+            text-align: center;
+
+            padding: 10px;
+        }
+
+
+        .accuracy-number {
+
+            font-size: 42px;
+
+            font-weight: 900;
+
+            color: var(--green);
+
+            margin-bottom: 5px;
+        }
+
+
+        .accuracy-label {
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+
+        .confusion-box {
+
+            margin-top: 18px;
+
+            padding-top: 18px;
+
+            border-top:
+                1px solid var(--border);
+        }
+
+
+        .confusion-box h4 {
+
+            color: var(--green-dark);
+
+            font-size: 14px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .matrix {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+        }
+
+
+        .matrix-item {
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            background: var(--green-soft);
+
+            text-align: center;
+        }
+
+
+        .matrix-item strong {
+
+            display: block;
+
+            font-size: 21px;
+
+            color: var(--green-dark);
+        }
+
+
+        .matrix-item span {
+
+            font-size: 11px;
+
+            color: var(--muted);
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+
+            text-align: center;
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            margin-top: 20px;
+
+            padding-bottom: 10px;
+        }
+
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+
+            display: inline-flex;
+
+            align-items: center;
+
             gap: 5px;
         }
 
+
         .dot {
+
             width: 6px;
+
             height: 6px;
+
             background: currentColor;
+
             border-radius: 50%;
+
             animation: blink 1.2s infinite;
         }
 
-        .dot:nth-child(2) { animation-delay: .2s; }
-        .dot:nth-child(3) { animation-delay: .4s; }
 
-        @keyframes blink {
-            0%, 80%, 100% { opacity: .3; }
-            40% { opacity: 1; }
+        .dot:nth-child(2) {
+
+            animation-delay: .2s;
         }
 
+
+        .dot:nth-child(3) {
+
+            animation-delay: .4s;
+        }
+
+
+        @keyframes blink {
+
+            0%, 80%, 100% {
+                opacity: .3;
+            }
+
+            40% {
+                opacity: 1;
+            }
+        }
+
+
         .hidden {
+
             display: none !important;
         }
 
-        /* Responsive */
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+
+            .stats-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
         @media (max-width: 900px) {
+
             .sidebar {
+
                 width: 220px;
             }
 
+
             .main {
-                padding: 30px 25px 20px;
+
+                padding:
+                    30px 25px 20px;
             }
 
+
             .result-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .model-info {
+
                 grid-template-columns: 1fr;
             }
         }
 
+
         @media (max-width: 700px) {
-            .app {
-                display: block;
+
+            body {
+
+                overflow: auto;
             }
+
+
+            .app {
+
+                display: block;
+
+                height: auto;
+
+                overflow: visible;
+            }
+
 
             .sidebar {
+
                 width: 100%;
+
+                height: auto;
+
                 padding: 17px;
+
                 border-right: 0;
-                border-bottom: 1px solid var(--border);
+
+                border-bottom:
+                    1px solid var(--border);
+
+                overflow: visible;
             }
 
+
             .brand {
+
                 justify-content: center;
             }
 
+
             .nav {
+
                 margin-top: 18px;
+
                 display: flex;
+
                 overflow-x: auto;
             }
 
+
             .nav-item {
+
                 width: auto;
+
                 white-space: nowrap;
             }
 
+
             .sidebar-card,
             .dark-toggle {
+
                 display: none;
             }
 
+
             .main {
-                padding: 25px 15px 20px;
+
+                height: auto;
+
+                padding:
+                    25px 15px 20px;
+
+                overflow: visible;
             }
 
+
             .topbar {
+
                 flex-direction: column;
             }
 
+
             h1 {
+
                 font-size: 26px;
             }
 
+
             .date-card {
+
                 width: 100%;
             }
 
+
             .input-panel {
-                padding: 20px 17px 16px;
+
+                padding:
+                    20px 17px 16px;
             }
+
 
             .history-row {
-                grid-template-columns: 1fr 62px 50px;
+
+                grid-template-columns:
+                    1fr 62px 50px;
             }
 
+
             .history-time {
+
                 display: none;
             }
+
+
+            .stats-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .statistics-panel {
+
+                padding: 18px;
+            }
         }
+
     </style>
 </head>
 
+
 <body>
-    <div class="app">
 
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="brand-icon">✓</div>
+<div class="app">
+
+
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ✓
+            </div>
+
+            <div>
+
+                <h2>
+                    Fake News<br>
+                    Detection
+                </h2>
+
+                <p>
+                    AI-Powered News Verifier
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <nav class="nav">
+
+            <button
+                class="nav-item active"
+                onclick="scrollToSection('home')"
+            >
+                <span class="nav-icon">⌂</span>
+                Home
+            </button>
+
+
+            <button
+                class="nav-item"
+                onclick="scrollToSection('detect')"
+            >
+                <span class="nav-icon">⌕</span>
+                Detect News
+            </button>
+
+
+            <button
+                class="nav-item"
+                onclick="scrollToSection('history')"
+            >
+                <span class="nav-icon">◷</span>
+                History
+            </button>
+
+
+            <!-- FIXED STATISTICS BUTTON -->
+
+            <button
+                class="nav-item"
+                onclick="scrollToSection('statistics')"
+            >
+                <span class="nav-icon">▥</span>
+                Statistics
+            </button>
+
+
+            <button
+                class="nav-item"
+                onclick="showAbout()"
+            >
+                <span class="nav-icon">ⓘ</span>
+                About
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-card">
+
+            <div class="shield">
+                🛡️
+            </div>
+
+            <strong>
+                Verify. Detect. Stay Informed.
+            </strong>
+
+            <p>
+                Helping you identify real news
+                in a world of misinformation.
+            </p>
+
+        </div>
+
+
+        <div class="dark-toggle">
+
+            <span>
+                ◐ &nbsp; Dark Mode
+            </span>
+
+            <button
+                class="switch"
+                onclick="toggleDarkMode()"
+                aria-label="Toggle dark mode"
+            ></button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================
+         MAIN CONTENT
+    ====================================== -->
+
+    <main
+        class="main"
+        id="home"
+    >
+
+
+        <!-- =================================
+             TOP BAR
+        ================================== -->
+
+        <div class="topbar">
+
+            <div class="title-wrap">
+
+                <div class="title-shield">
+                    🛡️
+                </div>
+
                 <div>
-                    <h2>Fake News<br>Detection</h2>
-                    <p>AI-Powered News Verifier</p>
+
+                    <h1>
+                        Fake News Detection
+                    </h1>
+
+                    <p class="subtitle">
+                        Check the authenticity of any news content
+                    </p>
+
                 </div>
+
             </div>
 
-            <nav class="nav">
-                <button class="nav-item active" onclick="scrollToSection('home')">
-                    <span class="nav-icon">⌂</span> Home
-                </button>
-                <button class="nav-item" onclick="scrollToSection('detect')">
-                    <span class="nav-icon">⌕</span> Detect News
-                </button>
-                <button class="nav-item" onclick="scrollToSection('history')">
-                    <span class="nav-icon">◷</span> History
-                </button>
-               
-                <button class="nav-item" onclick="showAbout()">
-                    <span class="nav-icon">ⓘ</span> About
-                </button>
-            </nav>
 
-            <div class="sidebar-card">
-                <div class="shield">🛡️</div>
-                <strong>Verify. Detect. Stay Informed.</strong>
-                <p>Helping you identify real news in a world of misinformation.</p>
+            <div class="date-card">
+
+                <small>
+                    Today's Date
+                </small>
+
+                <strong id="todayDate"></strong>
+
             </div>
 
-            <div class="dark-toggle">
-                <span>◐ &nbsp; Dark Mode</span>
-                <button class="switch" id="darkSwitch" onclick="toggleDarkMode()" aria-label="Toggle dark mode"></button>
+        </div>
+
+
+        <!-- =================================
+             DETECT NEWS
+        ================================== -->
+
+        <section
+            class="panel input-panel"
+            id="detect"
+        >
+
+            <div class="section-title">
+                ✎ &nbsp; Enter News Article or Text
             </div>
-        </aside>
 
-        <main class="main" id="home">
 
-            <div class="topbar">
-                <div class="title-wrap">
-                    <div class="title-shield">🛡️</div>
+            <textarea
+                id="newsText"
+                maxlength="5000"
+                placeholder="Paste your news article or text here..."
+            ></textarea>
+
+
+            <div class="input-footer">
+
+                <span id="charCount">
+                    0 / 5000
+                </span>
+
+            </div>
+
+
+            <div class="detect-wrap">
+
+                <button
+                    class="detect-btn"
+                    id="detectBtn"
+                    onclick="checkNews()"
+                >
+                    🔍 &nbsp; Detect News
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             RESULT
+        ================================== -->
+
+        <section
+            class="result-grid hidden"
+            id="resultSection"
+        >
+
+
+            <div
+                class="result-card real"
+                id="resultCard"
+            >
+
+                <div class="card-label">
+                    Prediction
+                </div>
+
+
+                <div class="prediction-row">
+
                     <div>
-                        <h1>Fake News Detection</h1>
-                        <p class="subtitle">Check the authenticity of any news content</p>
-                    </div>
-                </div>
 
-                <div class="date-card">
-                    <small>Today's Date</small>
-                    <strong id="todayDate"></strong>
-                </div>
-            </div>
-
-            <section class="panel input-panel" id="detect">
-                <div class="section-title">✎ &nbsp; Enter News Article or Text</div>
-
-                <textarea
-                    id="newsText"
-                    maxlength="5000"
-                    placeholder="Paste your news article or text here..."></textarea>
-
-                <div class="input-footer">
-                    <span id="charCount">0 / 5000</span>
-                </div>
-
-                <div class="detect-wrap">
-                    <button class="detect-btn" id="detectBtn" onclick="checkNews()">
-                        🔍 &nbsp; Detect News
-                    </button>
-                </div>
-            </section>
-
-            <section class="result-grid hidden" id="resultSection">
-                <div class="result-card real" id="resultCard">
-                    <div class="card-label">Prediction</div>
-
-                    <div class="prediction-row">
-                        <div>
-                            <div id="predictionText">Real News</div>
-                            <div class="prediction-message" id="predictionMessage">
-                                This news is likely to be real.
-                            </div>
+                        <div id="predictionText">
+                            Real News
                         </div>
 
-                        <div class="status-icon" id="statusIcon">✓</div>
+                        <div
+                            class="prediction-message"
+                            id="predictionMessage"
+                        >
+                            This news is likely to be real.
+                        </div>
+
                     </div>
-                </div>
 
-                <div class="result-card">
-                    <div class="card-label">Confidence Score</div>
-                    <div class="confidence-value" id="confidenceText">0%</div>
 
-                    <div class="progress">
-                        <div id="progressBar"></div>
+                    <div
+                        class="status-icon"
+                        id="statusIcon"
+                    >
+                        ✓
                     </div>
-                </div>
-            </section>
 
-            <section class="panel history-panel" id="history">
-                <div class="history-heading">
-                    <h3>◷ &nbsp; Recent History</h3>
-                    <button class="clear-history" onclick="clearHistory()" title="Clear history">♜</button>
                 </div>
 
-                <div class="history-list" id="historyList">
-                    <div class="empty-history">No news checked yet.</div>
-                </div>
-            </section>
-
-            <div class="footer">
-                🛡️ Fake News Detection System &nbsp; | &nbsp; Built using AI &amp; ML
             </div>
-        </main>
-    </div>
 
-    <script>
-        const newsText = document.getElementById("newsText");
-        const charCount = document.getElementById("charCount");
-        const detectBtn = document.getElementById("detectBtn");
 
-        newsText.addEventListener("input", () => {
-            charCount.textContent = `${newsText.value.length} / 5000`;
-        });
+            <div class="result-card">
 
-        function setTodayDate() {
-            const now = new Date();
-            document.getElementById("todayDate").textContent =
-                now.toLocaleDateString("en-IN", {
+                <div class="card-label">
+                    Confidence Score
+                </div>
+
+
+                <div
+                    class="confidence-value"
+                    id="confidenceText"
+                >
+                    0%
+                </div>
+
+
+                <div class="progress">
+
+                    <div id="progressBar"></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             HISTORY
+        ================================== -->
+
+        <section
+            class="panel history-panel"
+            id="history"
+        >
+
+            <div class="history-heading">
+
+                <h3>
+                    ◷ &nbsp; Recent History
+                </h3>
+
+
+                <button
+                    class="clear-history"
+                    onclick="clearHistory()"
+                    title="Clear history"
+                >
+                    🗑
+                </button>
+
+            </div>
+
+
+            <div
+                class="history-list"
+                id="historyList"
+            >
+
+                <div class="empty-history">
+                    No news checked yet.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             STATISTICS
+        ================================== -->
+
+        <section
+            class="panel statistics-panel"
+            id="statistics"
+        >
+
+            <div class="statistics-heading">
+
+                <div>
+
+                    <h2>
+                        ▥ &nbsp; Statistics
+                    </h2>
+
+                    <p>
+                        Detection activity and trained model performance
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- USER STATISTICS -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        📰
+                    </div>
+
+                    <div class="stat-label">
+                        Total News Checked
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="totalChecked"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card green">
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                    <div class="stat-label">
+                        Real News Detected
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="realCount"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card red">
+
+                    <div class="stat-icon">
+                        ×
+                    </div>
+
+                    <div class="stat-label">
+                        Fake News Detected
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="fakeCount"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🎯
+                    </div>
+
+                    <div class="stat-label">
+                        Average Confidence
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="averageConfidence"
+                    >
+                        0%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MODEL INFORMATION -->
+
+            <div class="model-info">
+
+
+                <div class="model-box">
+
+                    <h3>
+                        🤖 Model Information
+                    </h3>
+
+
+                    <div class="model-row">
+
+                        <span>
+                            Algorithm
+                        </span>
+
+                        <strong>
+                            Logistic Regression
+                        </strong>
+
+                    </div>
+
+
+                    <div class="model-row">
+
+                        <span>
+                            Feature Extraction
+                        </span>
+
+                        <strong>
+                            TF-IDF
+                        </strong>
+
+                    </div>
+
+
+                    <div class="model-row">
+
+                        <span>
+                            TF-IDF Features
+                        </span>
+
+                        <strong>
+                            150,000
+                        </strong>
+
+                    </div>
+
+
+                    <div class="model-row">
+
+                        <span>
+                            Training Samples
+                        </span>
+
+                        <strong>
+                            93,458
+                        </strong>
+
+                    </div>
+
+
+                    <div class="model-row">
+
+                        <span>
+                            Testing Samples
+                        </span>
+
+                        <strong>
+                            23,365
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACCURACY -->
+
+                <div class="model-box">
+
+                    <h3>
+                        📊 Model Performance
+                    </h3>
+
+
+                    <div class="accuracy-big">
+
+                        <div class="accuracy-number">
+                            97.71%
+                        </div>
+
+                        <div class="accuracy-label">
+                            Test Accuracy
+                        </div>
+
+                    </div>
+
+
+                    <div class="confusion-box">
+
+                        <h4>
+                            Confusion Matrix
+                        </h4>
+
+
+                        <div class="matrix">
+
+
+                            <div class="matrix-item">
+
+                                <strong>
+                                    10,340
+                                </strong>
+
+                                <span>
+                                    Fake → Fake
+                                </span>
+
+                            </div>
+
+
+                            <div class="matrix-item">
+
+                                <strong>
+                                    308
+                                </strong>
+
+                                <span>
+                                    Fake → Real
+                                </span>
+
+                            </div>
+
+
+                            <div class="matrix-item">
+
+                                <strong>
+                                    228
+                                </strong>
+
+                                <span>
+                                    Real → Fake
+                                </span>
+
+                            </div>
+
+
+                            <div class="matrix-item">
+
+                                <strong>
+                                    12,489
+                                </strong>
+
+                                <span>
+                                    Real → Real
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             FOOTER
+        ================================== -->
+
+        <div class="footer">
+
+            🛡️ Fake News Detection System
+            &nbsp; | &nbsp;
+            Built using AI &amp; ML
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+
+    /* =====================================
+       ELEMENTS
+    ====================================== */
+
+    const newsText =
+        document.getElementById("newsText");
+
+
+    const charCount =
+        document.getElementById("charCount");
+
+
+    const detectBtn =
+        document.getElementById("detectBtn");
+
+
+    /* =====================================
+       CHARACTER COUNT
+    ====================================== */
+
+    newsText.addEventListener(
+        "input",
+        function () {
+
+            charCount.textContent =
+                `${newsText.value.length} / 5000`;
+
+        }
+    );
+
+
+    /* =====================================
+       TODAY DATE
+    ====================================== */
+
+    function setTodayDate() {
+
+        const now = new Date();
+
+
+        document.getElementById(
+            "todayDate"
+        ).textContent =
+
+            now.toLocaleDateString(
+                "en-IN",
+                {
                     day: "2-digit",
                     month: "short",
                     year: "numeric"
-                });
-        }
-
-        function scrollToSection(id) {
-            document.getElementById(id)?.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-
-        function showAbout() {
-            alert(
-                "Fake News Detection System\\n\\n" +
-                "An AI/ML powered interface for checking whether submitted news is Real or Fake."
-            );
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle("dark");
-            localStorage.setItem(
-                "fakeNewsDarkMode",
-                document.body.classList.contains("dark") ? "1" : "0"
-            );
-        }
-
-        function loadDarkMode() {
-            if (localStorage.getItem("fakeNewsDarkMode") === "1") {
-                document.body.classList.add("dark");
-            }
-        }
-
-        async function checkNews() {
-            const news = newsText.value.trim();
-
-            const resultSection = document.getElementById("resultSection");
-            const resultCard = document.getElementById("resultCard");
-            const predictionText = document.getElementById("predictionText");
-            const predictionMessage = document.getElementById("predictionMessage");
-            const statusIcon = document.getElementById("statusIcon");
-            const confidenceText = document.getElementById("confidenceText");
-            const progressBar = document.getElementById("progressBar");
-
-            if (news === "") {
-                resultSection.classList.remove("hidden");
-                resultCard.classList.remove("real");
-                predictionText.className = "fake";
-                predictionText.textContent = "Enter News";
-                predictionMessage.textContent = "Please enter some news text first.";
-                statusIcon.className = "status-icon fake";
-                statusIcon.textContent = "!";
-                confidenceText.textContent = "0%";
-                progressBar.style.width = "0%";
-                return;
-            }
-
-            detectBtn.disabled = true;
-            detectBtn.innerHTML = `
-                <span class="loading">
-                    Checking
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </span>
-            `;
-
-            resultSection.classList.remove("hidden");
-            predictionText.className = "";
-            predictionText.textContent = "Checking...";
-            predictionMessage.textContent = "Analyzing the submitted news...";
-            statusIcon.className = "status-icon";
-            statusIcon.textContent = "…";
-            confidenceText.textContent = "0%";
-            progressBar.style.width = "0%";
-
-            try {
-                const response = await fetch("/predict", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        news: news
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error("Server error");
                 }
+            );
 
-                const data = await response.json();
+    }
 
-                const isReal = data.result === "REAL NEWS";
-                const confidence = Math.max(
-                    0,
-                    Math.min(100, Number(data.confidence) || 0)
+
+    /* =====================================
+       NAVIGATION
+    ====================================== */
+
+    function scrollToSection(id) {
+
+        const element =
+            document.getElementById(id);
+
+
+        if (!element) {
+
+            console.error(
+                "Section not found:",
+                id
+            );
+
+            return;
+        }
+
+
+        element.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+        });
+
+
+        /* Active menu */
+
+        document.querySelectorAll(
+            ".nav-item"
+        ).forEach(
+            button =>
+                button.classList.remove(
+                    "active"
+                )
+        );
+
+
+        const buttons =
+            document.querySelectorAll(
+                ".nav-item"
+            );
+
+
+        if (id === "home") {
+            buttons[0].classList.add("active");
+        }
+
+        if (id === "detect") {
+            buttons[1].classList.add("active");
+        }
+
+        if (id === "history") {
+            buttons[2].classList.add("active");
+        }
+
+        if (id === "statistics") {
+            buttons[3].classList.add("active");
+        }
+
+    }
+
+
+    /* =====================================
+       ABOUT
+    ====================================== */
+
+    function showAbout() {
+
+        alert(
+
+            "Fake News Detection System\n\n" +
+
+            "AI/ML powered fake news detection system.\n\n" +
+
+            "Model: Logistic Regression\n" +
+
+            "Features: TF-IDF\n" +
+
+            "Test Accuracy: 97.71%"
+
+        );
+
+    }
+
+
+    /* =====================================
+       DARK MODE
+    ====================================== */
+
+    function toggleDarkMode() {
+
+        document.body.classList.toggle(
+            "dark"
+        );
+
+
+        localStorage.setItem(
+
+            "fakeNewsDarkMode",
+
+            document.body.classList.contains(
+                "dark"
+            )
+                ? "1"
+                : "0"
+
+        );
+
+    }
+
+
+    function loadDarkMode() {
+
+        if (
+
+            localStorage.getItem(
+                "fakeNewsDarkMode"
+            ) === "1"
+
+        ) {
+
+            document.body.classList.add(
+                "dark"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================
+       CHECK NEWS
+    ====================================== */
+
+    async function checkNews() {
+
+        const news =
+            newsText.value.trim();
+
+
+        const resultSection =
+            document.getElementById(
+                "resultSection"
+            );
+
+
+        const resultCard =
+            document.getElementById(
+                "resultCard"
+            );
+
+
+        const predictionText =
+            document.getElementById(
+                "predictionText"
+            );
+
+
+        const predictionMessage =
+            document.getElementById(
+                "predictionMessage"
+            );
+
+
+        const statusIcon =
+            document.getElementById(
+                "statusIcon"
+            );
+
+
+        const confidenceText =
+            document.getElementById(
+                "confidenceText"
+            );
+
+
+        const progressBar =
+            document.getElementById(
+                "progressBar"
+            );
+
+
+        /* EMPTY INPUT */
+
+        if (news === "") {
+
+            resultSection.classList.remove(
+                "hidden"
+            );
+
+
+            resultCard.classList.remove(
+                "real"
+            );
+
+
+            predictionText.className =
+                "fake";
+
+
+            predictionText.textContent =
+                "Enter News";
+
+
+            predictionMessage.textContent =
+                "Please enter some news text first.";
+
+
+            statusIcon.className =
+                "status-icon fake";
+
+
+            statusIcon.textContent =
+                "!";
+
+
+            confidenceText.textContent =
+                "0%";
+
+
+            progressBar.style.width =
+                "0%";
+
+
+            return;
+        }
+
+
+        /* LOADING */
+
+        detectBtn.disabled = true;
+
+
+        detectBtn.innerHTML = `
+
+            <span class="loading">
+
+                Checking
+
+                <span class="dot"></span>
+
+                <span class="dot"></span>
+
+                <span class="dot"></span>
+
+            </span>
+
+        `;
+
+
+        resultSection.classList.remove(
+            "hidden"
+        );
+
+
+        predictionText.className = "";
+
+
+        predictionText.textContent =
+            "Checking...";
+
+
+        predictionMessage.textContent =
+            "Analyzing the submitted news...";
+
+
+        statusIcon.className =
+            "status-icon";
+
+
+        statusIcon.textContent =
+            "…";
+
+
+        confidenceText.textContent =
+            "0%";
+
+
+        progressBar.style.width =
+            "0%";
+
+
+        /* API REQUEST */
+
+        try {
+
+            const response =
+                await fetch(
+
+                    "/predict",
+
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                news: news
+
+                            })
+
+                    }
+
                 );
 
-                resultCard.classList.toggle("real", isReal);
-                predictionText.className = isReal ? "" : "fake";
-                predictionText.textContent = isReal ? "Real News" : "Fake News";
-                predictionMessage.textContent = isReal
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server error"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (data.error) {
+
+                throw new Error(
+                    data.error
+                );
+
+            }
+
+
+            /* RESULT */
+
+            const isReal =
+                data.result === "REAL NEWS";
+
+
+            const confidence =
+                Math.max(
+
+                    0,
+
+                    Math.min(
+
+                        100,
+
+                        Number(
+                            data.confidence
+                        ) || 0
+
+                    )
+
+                );
+
+
+            resultCard.classList.toggle(
+
+                "real",
+
+                isReal
+
+            );
+
+
+            predictionText.className =
+                isReal
+                    ? ""
+                    : "fake";
+
+
+            predictionText.textContent =
+                isReal
+                    ? "Real News"
+                    : "Fake News";
+
+
+            predictionMessage.textContent =
+                isReal
+
                     ? "This news is likely to be real."
+
                     : "This news is likely to be fake.";
 
-                statusIcon.className = isReal
+
+            statusIcon.className =
+                isReal
+
                     ? "status-icon"
+
                     : "status-icon fake";
-                statusIcon.textContent = isReal ? "✓" : "×";
 
-                confidenceText.textContent = confidence.toFixed(2) + "%";
 
-                setTimeout(() => {
-                    progressBar.style.width = confidence + "%";
-                }, 50);
+            statusIcon.textContent =
+                isReal
+                    ? "✓"
+                    : "×";
 
-                addHistory(news, isReal ? "Real" : "Fake", confidence);
 
-            } catch (error) {
-                console.error(error);
+            confidenceText.textContent =
+                confidence.toFixed(2)
+                + "%";
 
-                resultCard.classList.remove("real");
-                predictionText.className = "fake";
-                predictionText.textContent = "Error";
-                predictionMessage.textContent =
-                    "Something went wrong. Please check the backend.";
-                statusIcon.className = "status-icon fake";
-                statusIcon.textContent = "!";
-                confidenceText.textContent = "0%";
-                progressBar.style.width = "0%";
-            } finally {
-                detectBtn.disabled = false;
-                detectBtn.innerHTML = "🔍 &nbsp; Detect News";
-            }
-        }
 
-        function addHistory(news, result, confidence) {
-            const history = JSON.parse(
-                localStorage.getItem("fakeNewsHistory") || "[]"
+            setTimeout(
+                function () {
+
+                    progressBar.style.width =
+                        confidence + "%";
+
+                },
+                50
             );
 
-            history.unshift({
-                news: news,
-                result: result,
-                confidence: confidence,
-                time: new Date().toLocaleTimeString("en-IN", {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                })
-            });
 
-            localStorage.setItem(
-                "fakeNewsHistory",
-                JSON.stringify(history.slice(0, 10))
+            /* SAVE HISTORY */
+
+            addHistory(
+
+                news,
+
+                isReal
+                    ? "Real"
+                    : "Fake",
+
+                confidence
+
             );
 
-            renderHistory();
+
         }
 
-        function renderHistory() {
-            const list = document.getElementById("historyList");
-            const history = JSON.parse(
-                localStorage.getItem("fakeNewsHistory") || "[]"
+        catch (error) {
+
+            console.error(
+                "Prediction Error:",
+                error
             );
 
-            if (history.length === 0) {
-                list.innerHTML =
-                    '<div class="empty-history">No news checked yet.</div>';
-                return;
-            }
 
-            list.innerHTML = history.map(item => `
-                <div class="history-row">
-                    <div class="history-news" title="${escapeHtml(item.news)}">
-                        ${escapeHtml(item.news)}
-                    </div>
-                    <div class="badge ${item.result.toLowerCase()}">
-                        ${item.result}
-                    </div>
-                    <div class="history-confidence">
-                        ${Number(item.confidence).toFixed(0)}%
-                    </div>
-                    <div class="history-time">${item.time}</div>
-                </div>
-            `).join("");
+            resultCard.classList.remove(
+                "real"
+            );
+
+
+            predictionText.className =
+                "fake";
+
+
+            predictionText.textContent =
+                "Error";
+
+
+            predictionMessage.textContent =
+                "Something went wrong. Please check the backend.";
+
+
+            statusIcon.className =
+                "status-icon fake";
+
+
+            statusIcon.textContent =
+                "!";
+
+
+            confidenceText.textContent =
+                "0%";
+
+
+            progressBar.style.width =
+                "0%";
+
         }
 
-        function clearHistory() {
-            localStorage.removeItem("fakeNewsHistory");
-            renderHistory();
+
+        finally {
+
+            detectBtn.disabled =
+                false;
+
+
+            detectBtn.innerHTML =
+                "🔍 &nbsp; Detect News";
+
         }
 
-        function escapeHtml(text) {
-            return String(text)
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
-        }
+    }
 
-        setTodayDate();
-        loadDarkMode();
+
+    /* =====================================
+       ADD HISTORY
+    ====================================== */
+
+    function addHistory(
+        news,
+        result,
+        confidence
+    ) {
+
+        const history =
+            JSON.parse(
+
+                localStorage.getItem(
+                    "fakeNewsHistory"
+                ) || "[]"
+
+            );
+
+
+        history.unshift({
+
+            news: news,
+
+            result: result,
+
+            confidence: confidence,
+
+            time:
+                new Date().toLocaleTimeString(
+
+                    "en-IN",
+
+                    {
+
+                        hour: "2-digit",
+
+                        minute: "2-digit"
+
+                    }
+
+                )
+
+        });
+
+
+        localStorage.setItem(
+
+            "fakeNewsHistory",
+
+            JSON.stringify(
+                history.slice(0, 10)
+            )
+
+        );
+
+
         renderHistory();
-    </script>
+
+        updateStatistics();
+
+    }
+
+
+    /* =====================================
+       RENDER HISTORY
+    ====================================== */
+
+    function renderHistory() {
+
+        const list =
+            document.getElementById(
+                "historyList"
+            );
+
+
+        const history =
+            JSON.parse(
+
+                localStorage.getItem(
+                    "fakeNewsHistory"
+                ) || "[]"
+
+            );
+
+
+        if (history.length === 0) {
+
+            list.innerHTML =
+
+                '<div class="empty-history">' +
+
+                'No news checked yet.' +
+
+                '</div>';
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+
+            history.map(
+
+                item => `
+
+                    <div class="history-row">
+
+                        <div
+                            class="history-news"
+                            title="${escapeHtml(
+                                item.news
+                            )}"
+                        >
+
+                            ${escapeHtml(
+                                item.news
+                            )}
+
+                        </div>
+
+
+                        <div
+                            class="badge ${item.result.toLowerCase()}"
+                        >
+
+                            ${item.result}
+
+                        </div>
+
+
+                        <div
+                            class="history-confidence"
+                        >
+
+                            ${Number(
+                                item.confidence
+                            ).toFixed(0)}%
+
+                        </div>
+
+
+                        <div
+                            class="history-time"
+                        >
+
+                            ${item.time}
+
+                        </div>
+
+                    </div>
+
+                `
+
+            ).join("");
+
+    }
+
+
+    /* =====================================
+       CLEAR HISTORY
+    ====================================== */
+
+    function clearHistory() {
+
+        localStorage.removeItem(
+            "fakeNewsHistory"
+        );
+
+
+        renderHistory();
+
+        updateStatistics();
+
+    }
+
+
+    /* =====================================
+       STATISTICS
+    ====================================== */
+
+    function updateStatistics() {
+
+        const history =
+            JSON.parse(
+
+                localStorage.getItem(
+                    "fakeNewsHistory"
+                ) || "[]"
+
+            );
+
+
+        const total =
+            history.length;
+
+
+        const real =
+            history.filter(
+                item =>
+                    item.result === "Real"
+            ).length;
+
+
+        const fake =
+            history.filter(
+                item =>
+                    item.result === "Fake"
+            ).length;
+
+
+        let average =
+            0;
+
+
+        if (total > 0) {
+
+            const totalConfidence =
+                history.reduce(
+
+                    (sum, item) =>
+
+                        sum +
+                        Number(
+                            item.confidence
+                        ),
+
+                    0
+
+                );
+
+
+            average =
+                totalConfidence /
+                total;
+
+        }
+
+
+        document.getElementById(
+            "totalChecked"
+        ).textContent =
+            total;
+
+
+        document.getElementById(
+            "realCount"
+        ).textContent =
+            real;
+
+
+        document.getElementById(
+            "fakeCount"
+        ).textContent =
+            fake;
+
+
+        document.getElementById(
+            "averageConfidence"
+        ).textContent =
+            average.toFixed(1) + "%";
+
+    }
+
+
+    /* =====================================
+       ESCAPE HTML
+    ====================================== */
+
+    function escapeHtml(text) {
+
+        return String(text)
+
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+
+    }
+
+
+    /* =====================================
+       INITIALIZE
+    ====================================== */
+
+    setTodayDate();
+
+    loadDarkMode();
+
+    renderHistory();
+
+    updateStatistics();
+
+
+</script>
+
 </body>
 </html>
