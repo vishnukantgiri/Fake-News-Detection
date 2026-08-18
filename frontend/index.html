@@ -200,86 +200,6 @@ textarea:focus{
     transition:width .7s;
 }
 
-/* STATISTICS */
-
-.stats-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-}
-
-.stat{
-    padding:18px;
-    border-radius:14px;
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    text-align:center;
-}
-
-.stat span{
-    display:block;
-    color:#64748b;
-    font-size:12px;
-    margin-bottom:7px;
-}
-
-.stat strong{
-    font-size:27px;
-    color:#172554;
-}
-
-.stat.real strong{
-    color:#16a34a;
-}
-
-.stat.fake strong{
-    color:#dc2626;
-}
-
-.stat.conf strong{
-    color:#2563eb;
-}
-
-/* CHART */
-
-.chart{
-    margin-top:20px;
-}
-
-.chart-title{
-    display:flex;
-    justify-content:space-between;
-    color:#64748b;
-    font-size:13px;
-    margin-bottom:7px;
-}
-
-.chart-bg{
-    height:15px;
-    background:#fee2e2;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.chart-fill{
-    height:100%;
-    width:0;
-    background:#16a34a;
-    transition:width .5s;
-}
-
-.refresh-btn{
-    margin-top:16px;
-    width:100%;
-    padding:12px;
-    border:1px solid #dbe3ef;
-    background:#fff;
-    border-radius:10px;
-    color:#2563eb;
-    font-weight:bold;
-    cursor:pointer;
-}
-
 /* HISTORY */
 
 .history{
@@ -407,15 +327,11 @@ textarea:focus{
 
     .nav button{
         white-space:nowrap;
-        min-width:110px;
+        min-width:140px;
     }
 
     .buttons{
         flex-direction:column;
-    }
-
-    .stats-grid{
-        grid-template-columns:1fr 1fr;
     }
 
     .history-row{
@@ -466,14 +382,6 @@ textarea:focus{
     </button>
 
     <button
-        id="statsTab"
-        onclick="showPage('statsPage','statsTab')">
-
-        📊 Statistics
-
-    </button>
-
-    <button
         id="historyTab"
         onclick="showPage('historyPage','historyTab')">
 
@@ -493,8 +401,7 @@ textarea:focus{
     <textarea
         id="newsText"
         maxlength="5000"
-        placeholder="Paste your news article or text here...">
-    </textarea>
+        placeholder="Paste your news article or text here..."></textarea>
 
     <div class="counter">
 
@@ -555,118 +462,6 @@ textarea:focus{
         </div>
 
     </div>
-
-</section>
-
-
-<!-- STATISTICS PAGE -->
-
-<section
-    id="statsPage"
-    class="page">
-
-    <div class="stats-grid">
-
-        <div class="stat">
-
-            <span>
-                📰 Total Checked
-            </span>
-
-            <strong id="totalStat">
-                0
-            </strong>
-
-        </div>
-
-
-        <div class="stat real">
-
-            <span>
-                ✅ Real News
-            </span>
-
-            <strong id="realStat">
-                0
-            </strong>
-
-        </div>
-
-
-        <div class="stat fake">
-
-            <span>
-                ❌ Fake News
-            </span>
-
-            <strong id="fakeStat">
-                0
-            </strong>
-
-        </div>
-
-
-        <div class="stat conf">
-
-            <span>
-                🎯 Avg. Confidence
-            </span>
-
-            <strong id="avgStat">
-                0%
-            </strong>
-
-        </div>
-
-    </div>
-
-
-    <!-- REAL NEWS RATIO -->
-
-    <div class="chart">
-
-        <div class="chart-title">
-
-            <span>
-                Real News Ratio
-            </span>
-
-            <b id="ratioText">
-                0%
-            </b>
-
-        </div>
-
-
-        <div class="chart-bg">
-
-            <div
-                class="chart-fill"
-                id="ratioBar">
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <button
-        class="refresh-btn"
-        onclick="updateStats()">
-
-        ↻ Refresh Statistics
-
-    </button>
-
-
-    <p
-        class="subtitle"
-        style="margin-top:15px">
-
-        Statistics are automatically updated after
-        every successful news detection.
-
-    </p>
 
 </section>
 
@@ -829,8 +624,6 @@ function saveHistory(
 
     renderHistory();
 
-    updateStats();
-
 }
 
 
@@ -962,113 +755,6 @@ function renderHistory(){
 
 
 /* ================================
-   UPDATE STATISTICS
-================================ */
-
-function updateStats(){
-
-    const history =
-        getHistory();
-
-
-    const total =
-        history.length;
-
-
-    const real =
-        history.filter(
-            function(item){
-
-                return item.result === "Real";
-
-            }
-        ).length;
-
-
-    const fake =
-        history.filter(
-            function(item){
-
-                return item.result === "Fake";
-
-            }
-        ).length;
-
-
-    let average = 0;
-
-
-    if(total > 0){
-
-        const totalConfidence =
-            history.reduce(
-                function(sum,item){
-
-                    return sum +
-                        Number(
-                            item.confidence || 0
-                        );
-
-                },
-                0
-            );
-
-
-        average =
-            totalConfidence / total;
-
-    }
-
-
-    const realRatio =
-        total > 0
-        ? (real / total) * 100
-        : 0;
-
-
-    /* Cards */
-
-    document.getElementById(
-        "totalStat"
-    ).textContent =
-        total;
-
-
-    document.getElementById(
-        "realStat"
-    ).textContent =
-        real;
-
-
-    document.getElementById(
-        "fakeStat"
-    ).textContent =
-        fake;
-
-
-    document.getElementById(
-        "avgStat"
-    ).textContent =
-        average.toFixed(1) + "%";
-
-
-    /* Graph */
-
-    document.getElementById(
-        "ratioText"
-    ).textContent =
-        realRatio.toFixed(1) + "%";
-
-
-    document.getElementById(
-        "ratioBar"
-    ).style.width =
-        realRatio + "%";
-
-}
-
-
-/* ================================
    PAGE SWITCH
 ================================ */
 
@@ -1111,13 +797,6 @@ function showPage(
     document
         .getElementById(tabId)
         .classList.add("active");
-
-
-    if(pageId === "statsPage"){
-
-        updateStats();
-
-    }
 
 
     if(pageId === "historyPage"){
@@ -1330,9 +1009,8 @@ async function checkNews(){
             confidence + "%";
 
 
-        /* IMPORTANT:
-           Save successful prediction
-           for Statistics */
+        /* Save successful prediction
+           for History */
 
         saveHistory(
             news,
@@ -1451,8 +1129,6 @@ function clearHistory(){
 
     renderHistory();
 
-    updateStats();
-
 }
 
 
@@ -1461,8 +1137,6 @@ function clearHistory(){
 ================================ */
 
 renderHistory();
-
-updateStats();
 
 </script>
 
